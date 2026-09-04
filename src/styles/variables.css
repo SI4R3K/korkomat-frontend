@@ -1,0 +1,27 @@
+:root {
+    --font-primary:
+        Inter,
+        system-ui,
+        sans-serif;
+
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-soft: rgb(37 99 235 / 7%);
+    --color-secondary: #96a8d1;
+    --color-danger: #dc2626;
+
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-contrast: #363131;
+
+    --color-text-primary: #1f2937;
+    --color-text-secondary: #6b7280;
+    --color-text-on-primary: #ffffff;
+    --color-text-on-contrast: #f0fdfa;
+    --color-border-on-contrast: rgb(240 253 250 / 30%);
+
+    --color-border: #d1d5db;
+    --color-border-focus: #555555;
+    --color-shadow: rgb(31 41 55 / 8%);
+    --color-shadow-hover: rgb(31 41 55 / 14%);
+}

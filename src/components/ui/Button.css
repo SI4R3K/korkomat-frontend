@@ -1,0 +1,36 @@
+.button {
+    padding: 12px 20px;
+    margin-top: 5px;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-on-primary);
+
+    transition: 0.2s;
+}
+
+.button:hover {
+    opacity: 0.9;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.button--primary {
+    background-color: var(--color-primary);
+}
+
+.button--secondary {
+    background-color: var(--color-secondary);
+}
+
+.button--danger {
+    background-color: var(--color-danger);
+}
