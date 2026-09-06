@@ -9,16 +9,14 @@ import { getUserDetails } from '../api/userDetailsApi'
 
 import type {
     UserDetailsResponse,
-    StudentDetailsResponse,
-    TutorDetailsResponse
 } from '../types/user'
 
 type UserContextType = {
-    userId: string,
-    email: string,
-    name: string,
-    studentProfileId: string,
-    tutorProfileId: string,
+    userId: string | null,
+    email: string | null,
+    fullName: string | null,
+    studentProfileId: string | null,
+    tutorProfileId: string | null,
 
     getDetails: () => Promise<UserDetailsResponse>
 }
@@ -34,6 +32,7 @@ type UserDetailsProviderProps = {
 export function UserDetailsProvider({
     children,
 }: UserDetailsProviderProps) {
+
     const [userId, setUserId] = useState<string | null>(() => {
         return localStorage.getItem(
             'userId'
@@ -46,9 +45,9 @@ export function UserDetailsProvider({
         )
     })
 
-    const [name, setName] = useState<string | null>(() => {
+    const [fullName, setName] = useState<string | null>(() => {
         return localStorage.getItem(
-            'name'
+            'fullName'
         )
     })
 
@@ -73,32 +72,60 @@ export function UserDetailsProvider({
             'userId',
             response.id
         )
+        setUserId(response.id)
 
         
-        localStorage.setItem(
-            'name',
-            response.name
-        )
+        const fullName = response.fullName ?? response.name ?? null
+
+        if (fullName) {
+            localStorage.setItem('fullName', fullName)
+        } else {
+            localStorage.removeItem('fullName')
+        }
+        setName(fullName)
 
         
         localStorage.setItem(
             'email',
             response.email
         )
+        setEmail(response.email)
 
         
-        localStorage.setItem(
-            'studentProfileId',
-            response.studentProfile.studentProfileId
-        )
+        const studentProfileId = response.studentProfile?.id ?? null
+        const tutorProfileId = response.tutorProfile?.id ?? null
 
-        localStorage.setItem(
-            'tutorProfileId',
-            response.tutorProfile.tutorProfileId
-        )
+        if (studentProfileId) {
+            localStorage.setItem('studentProfileId', studentProfileId)
+        } else {
+            localStorage.removeItem('studentProfileId')
+        }
+        setStudentProfile(studentProfileId)
+
+        if (tutorProfileId) {
+            localStorage.setItem('tutorProfileId', tutorProfileId)
+        } else {
+            localStorage.removeItem('tutorProfileId')
+        }
+        setTutorProfile(tutorProfileId)
 
         return response
     }
+
+    return (
+        <UserContext.Provider
+            value={{
+                userId,
+                email,
+                fullName,
+                studentProfileId: studentProfile,
+                tutorProfileId: tutorProfile,
+                getDetails,
+            }}
+        >
+            {children}
+        </UserContext.Provider>
+    )
 }
 
 export function useUserDetails() {

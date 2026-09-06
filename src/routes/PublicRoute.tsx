@@ -17,7 +17,7 @@ function PublicRoute({
     if (isAuthenticated) {
         return (
             <Navigate
-                to="/dashboard"
+                to="/select-profile"
                 replace
             />
         )

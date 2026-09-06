@@ -1,9 +1,5 @@
 import { apiClient } from "./client";
-import type { 
-    UserDetailsResponse, 
-    StudentDetailsResponse, 
-    TutorDetailsResponse 
-} from "../types/user";
+import type { UserDetailsResponse } from "../types/user";
 
 export async function getUserDetails( 
 ): Promise<UserDetailsResponse> {
@@ -17,10 +13,12 @@ export async function getUserDetails(
     )
 
     if (!response.ok) {
+        const message = await response.text()
         throw new Error(
-            'Getting user details failed'
+            message || `Getting user details failed (${response.status})`
         )
     }
 
-    return response.json()
+    const payload = await response.json()
+    return payload.data ?? payload
 }

@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 
 import { AuthProvider } from './context/AuthContext.tsx'
+import { UserDetailsProvider } from './context/UserContext.tsx'
 
 import './styles/variables.css'
 import './styles/global.css'
@@ -15,7 +16,9 @@ createRoot(
     <StrictMode>
         <BrowserRouter>
             <AuthProvider>
-                <App />
+                <UserDetailsProvider>
+                    <App />
+                </UserDetailsProvider>
             </AuthProvider>
         </BrowserRouter>
     </StrictMode>,

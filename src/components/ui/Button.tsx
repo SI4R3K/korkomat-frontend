@@ -8,21 +8,24 @@ type ButtonVariant =
 type ButtonProps = {
     children: React.ReactNode
     variant?: ButtonVariant
-    disabled: boolean
+    disabled?: boolean
     type?: 'button' | 'submit' | 'reset'
+    onClick?: () => void
 }
 
 function Button({
     children,
     variant='primary',
     disabled=false,
-    type='button'
+    type='button',
+    onClick,
 }: ButtonProps) {
     return (
         <button
             className={`button button--${variant}`}
             type={type}
-            disabled={disabled}>
+            disabled={disabled}
+            onClick={onClick}>
 
             {children}
         </button>

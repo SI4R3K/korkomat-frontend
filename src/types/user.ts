@@ -1,15 +1,16 @@
 export type UserDetailsResponse = {
     id: string,
     email: string,
-    name: string,
-    studentProfile: StudentDetailsResponse,
-    tutorProfile: TutorDetailsResponse, 
+    name?: string,
+    fullName?: string,
+    studentProfile: StudentDetailsResponse | null,
+    tutorProfile: TutorDetailsResponse | null,
 }
 
 export type StudentDetailsResponse = {
-    studentProfileId: string,
+    id: string,
 }
 
 export type TutorDetailsResponse = {
-    tutorProfileId: string,
+    id: string,
 }

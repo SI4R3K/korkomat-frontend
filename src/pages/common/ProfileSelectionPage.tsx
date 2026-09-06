@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 import SelectProfileContainer from "../../components/ui/SelectProfileContainer"
 import './ProfileSelectionPage.css'
 
@@ -8,7 +6,7 @@ function ProfileSelectionPage() {
         <main className="profile-selection">
             <section className="profile-selection__intro" aria-labelledby="profile-selection-title">
                 <span className="profile-selection__eyebrow">Korkomat account</span>
-                <h1 id="profile-selection-title">Choose your profile</h1>
+                <h1 id="profile-selection-title">Hi, {localStorage.getItem('fullName')} choose your profile</h1>
                 <p>
                     Select the profile you would like to use. You can switch between
                     your profiles whenever you need to.
@@ -26,9 +24,6 @@ function ProfileSelectionPage() {
                 />
             </section>
 
-            <p className="profile-selection__register">
-                Don&apos;t have a profile yet? <Link to="/register">Create one</Link>
-            </p>
         </main>
     )
 }

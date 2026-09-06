@@ -42,11 +42,11 @@ function LoginForm() {
                 password
             })
 
-            const response = await getDetails()
+            const userDetails = await getDetails()
             
-            console.log(response)
+            console.log(userDetails)
 
-            navigate('/dashboard')
+            navigate('/select-profile')
 
         } catch (error) {
             console.error('Login error: ',error)
