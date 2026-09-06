@@ -1,32 +1,64 @@
-# React + TypeScript + Vite
+# KORKOMAT – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Frontend application for **KORKOMAT**, a web application designed to simplify the process of organizing and scheduling private tutoring lessons.
 
-Currently, two official plugins are available:
+The application provides an interface for students, tutors, and administrators to interact with the KORKOMAT platform.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+> 🚧 **Work in Progress**
 
-## React Compiler
+The frontend is currently under development. At this stage, the basic authentication and profile setup flow has been implemented.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Current Features
 
-## Expanding the Oxlint configuration
+* User login
+* User registration
+* Profile type selection
+* Student profile setup
+* Tutor profile setup
+* Basic application navigation
+* Role-based profile handling
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Tech Stack
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+* React
+* TypeScript
+* React Router
+* CSS
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Backend
+
+The frontend communicates with the KORKOMAT backend application responsible for:
+
+* User authentication and authorization
+* User and profile management
+* Subject management
+* Tutor availability management
+* Lesson scheduling and booking
+
+The backend is developed using:
+
+* Kotlin
+* Spring Boot
+* Spring Security
+* Spring Data JPA / Hibernate
+* PostgreSQL
+
+## Planned Features
+
+The following features are planned for future development:
+
+* Student dashboard
+* Tutor dashboard
+* Available lesson slot browsing
+* Lesson booking
+* Lesson management
+* Tutor availability management
+* Profile management
+* Improved application navigation
+* Improved UI and responsive design
+
+## Project Status
+
+🚧 **Work in Progress**
+
+The project is currently focused on building the core user interface and integrating it with the backend API.
