@@ -10,7 +10,6 @@ import Input from '../ui/Input'
 
 import { useAuth } from '../../context/AuthContext'
 
-import './LoginForm.css'
 import { useUserDetails } from '../../context/UserContext'
 
 function LoginForm() {
@@ -56,11 +55,8 @@ function LoginForm() {
     }
 
     return (
-        <form
-            className='login-form' 
-            onSubmit={handleSubmit}
-        >
-            <div className="login-form_fields">
+        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-1">
 
                 <Input
                     id="email"

@@ -1,6 +1,15 @@
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+React, TypeScript, Vite, and Tailwind CSS 4 frontend for Korkomat.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+Tailwind is integrated through `@tailwindcss/vite`; no `tailwind.config.js` or `npx tailwindcss init` command is required.
 
 Currently, two official plugins are available:
 

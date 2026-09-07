@@ -1,5 +1,4 @@
 
-import './SelectProfileContainer.css'
 import { useNavigate } from 'react-router-dom'
 import { useUserDetails } from '../../context/UserContext'
 
@@ -31,19 +30,19 @@ function SelectProfileContainer({
     
     return (
         <div
-            className="profile-card"
+            className="group grid min-h-[230px] grid-cols-[auto_1fr] gap-6 rounded-2xl border border-[var(--color-border)] bg-white p-7 shadow-[0_12px_28px_rgb(25_43_58/8%)] transition duration-200 hover:-translate-y-1 hover:border-[var(--color-primary)] hover:shadow-[0_16px_34px_rgb(25_43_58/14%)]"
             aria-label={`${profileType} profile`}
         >
-            <div className="profile-card__icon" aria-hidden="true">
+            <div className="grid size-[52px] place-items-center rounded-[14px] bg-[var(--color-primary)] text-[22px] font-bold text-white" aria-hidden="true">
                 {profileType.charAt(0)}
             </div>
-            <div className="profile-card__content">
-                <h2>{profileType}</h2>
-                <p>{description}</p>
+            <div>
+                <h2 className="mb-2 mt-0 text-[23px] font-bold text-[var(--color-text-primary)]">{profileType}</h2>
+                <p className="m-0 max-w-[240px] leading-relaxed text-[var(--color-text-secondary)]">{description}</p>
             </div>
-            <button className="profile-card__button" type="button" onClick={handleSelect}>
+            <button className="col-span-full flex w-full items-center justify-between border-0 border-t border-[var(--color-border)] bg-transparent py-3 text-left font-bold text-[var(--color-primary)] transition hover:text-[var(--color-primary-hover)]" type="button" onClick={handleSelect}>
                 Select profile
-                <span aria-hidden="true">-&gt;</span>
+                <span aria-hidden="true" className="text-xl transition-transform group-hover:translate-x-1">-&gt;</span>
             </button>
         </div>
     )

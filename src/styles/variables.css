@@ -1,27 +1,27 @@
 :root {
     --font-primary:
-        Inter,
+        "DM Sans",
         system-ui,
         sans-serif;
 
-    --color-primary: #2563eb;
-    --color-primary-hover: #1d4ed8;
-    --color-primary-soft: rgb(37 99 235 / 7%);
-    --color-secondary: #96a8d1;
-    --color-danger: #dc2626;
+    --color-primary: #e85d3f;
+    --color-primary-hover: #c9472f;
+    --color-primary-soft: rgb(232 93 63 / 10%);
+    --color-secondary: #51627c;
+    --color-danger: #c2413b;
 
-    --color-background: #f8fafc;
+    --color-background: #f6f3ee;
     --color-surface: #ffffff;
-    --color-surface-contrast: #363131;
+    --color-surface-contrast: #192b3a;
 
-    --color-text-primary: #1f2937;
-    --color-text-secondary: #6b7280;
+    --color-text-primary: #192b3a;
+    --color-text-secondary: #69737d;
     --color-text-on-primary: #ffffff;
     --color-text-on-contrast: #f0fdfa;
     --color-border-on-contrast: rgb(240 253 250 / 30%);
 
-    --color-border: #d1d5db;
-    --color-border-focus: #555555;
+    --color-border: #d9d5ce;
+    --color-border-focus: #e85d3f;
     --color-shadow: rgb(31 41 55 / 8%);
     --color-shadow-hover: rgb(31 41 55 / 14%);
 }
