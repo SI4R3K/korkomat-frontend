@@ -7,6 +7,8 @@ import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 import ProfileSelection from '../pages/common/ProfileSelectionPage'
 import DashboardPage from '../pages/common/DashboardPage'
+import AvailableSlotPage from '../pages/student/AvailableSlotsPage'
+import AvailabilityPage from '../pages/tutor/AvailabilityPage'
 
 function AppRouter() {
     return (
@@ -64,9 +66,23 @@ function AppRouter() {
                 }
             />
 
+            <Route path="/student/available-slots" element={
+                <ProtectedRoute>
+                    <AvailableSlotPage profileType="Student" />
+                </ProtectedRoute>
+                } 
+            />
+
             <Route path="/tutor/dashboard" element={
                 <ProtectedRoute>
                     <DashboardPage profileType="Tutor" />
+                </ProtectedRoute>
+                }
+            />
+
+            <Route path="/tutor/availability" element={
+                <ProtectedRoute>
+                    <AvailabilityPage />
                 </ProtectedRoute>
                 }
             />

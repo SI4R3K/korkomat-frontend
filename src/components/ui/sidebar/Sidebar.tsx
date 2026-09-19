@@ -36,7 +36,7 @@ function Sidebar({ profileType, expanded, setExpanded, onLogout, isLoggingOut }:
     const navItems: SidebarItemProps[] = profileType === 'Student'
         ? [
             { icon: <HomeIcon />, text: 'Overview', to: `/${role}/dashboard`, expanded },
-            { icon: <MagnifyingGlassIcon />, text: 'Find tutors', to: `/${role}/dashboard`, expanded, active: false },
+            { icon: <MagnifyingGlassIcon />, text: 'Schedule lessons', to: `/${role}/available-slots`, expanded, active: false },
             { icon: <BookOpenIcon />, text: 'My lessons', to: `/${role}/dashboard`, expanded, active: false },
             { icon: <ChatBubbleLeftRightIcon />, text: 'Messages', to: `/${role}/dashboard`, expanded, active: false },
             { icon: <UserCircleIcon />, text: 'My profile', to: '/select-profile', expanded, active: false },
@@ -44,7 +44,7 @@ function Sidebar({ profileType, expanded, setExpanded, onLogout, isLoggingOut }:
         : [
             { icon: <HomeIcon />, text: 'Overview', to: `/${role}/dashboard`, expanded },
             { icon: <UsersIcon />, text: 'My students', to: `/${role}/dashboard`, expanded, active: false },
-            { icon: <CalendarDaysIcon />, text: 'Availability', to: `/${role}/dashboard`, expanded, active: false },
+            { icon: <CalendarDaysIcon />, text: 'Availability', to: `/${role}/availability`, expanded, active: false },
             { icon: <ChatBubbleLeftRightIcon />, text: 'Messages', to: `/${role}/dashboard`, expanded, active: false },
             { icon: <UserCircleIcon />, text: 'My profile', to: '/select-profile', expanded, active: false },
         ]
