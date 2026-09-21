@@ -9,6 +9,7 @@ import ProfileSelection from '../pages/common/ProfileSelectionPage'
 import DashboardPage from '../pages/common/DashboardPage'
 import AvailableSlotPage from '../pages/student/AvailableSlotsPage'
 import AvailabilityPage from '../pages/tutor/AvailabilityPage'
+import MySubjectsPage from '../pages/tutor/MySubjectsPage'
 
 function AppRouter() {
     return (
@@ -85,6 +86,13 @@ function AppRouter() {
                     <AvailabilityPage />
                 </ProtectedRoute>
                 }
+            />
+
+            <Route path="/tutor/my-subjects" element={
+                <ProtectedRoute>
+                    <MySubjectsPage />
+                </ProtectedRoute>
+            }
             />
         </Routes>
     )

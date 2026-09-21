@@ -10,6 +10,7 @@ import {
     MagnifyingGlassIcon,
     UserCircleIcon,
     UsersIcon,
+    BeakerIcon,
 } from '@heroicons/react/24/outline'
 import { useUserDetails } from '../../../context/UserContext'
 import SidebarItem, { type SidebarItemProps } from './SidebarItem'
@@ -45,6 +46,7 @@ function Sidebar({ profileType, expanded, setExpanded, onLogout, isLoggingOut }:
             { icon: <HomeIcon />, text: 'Overview', to: `/${role}/dashboard`, expanded },
             { icon: <UsersIcon />, text: 'My students', to: `/${role}/dashboard`, expanded, active: false },
             { icon: <CalendarDaysIcon />, text: 'Availability', to: `/${role}/availability`, expanded, active: false },
+            { icon: <BeakerIcon />, text: 'My subjects', to : `/${role}/my-subjects`, expanded, active: false},
             { icon: <ChatBubbleLeftRightIcon />, text: 'Messages', to: `/${role}/dashboard`, expanded, active: false },
             { icon: <UserCircleIcon />, text: 'My profile', to: '/select-profile', expanded, active: false },
         ]
