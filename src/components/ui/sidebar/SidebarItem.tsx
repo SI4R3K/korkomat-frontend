@@ -6,6 +6,7 @@ export interface SidebarItemProps {
     expanded: boolean,
     to: string,
     active?: boolean,
+    className?: string,
 }
 
 export default function SidebarItem({
@@ -14,9 +15,10 @@ export default function SidebarItem({
     expanded=false,
     to,
     active,
+    className = '',
 }: SidebarItemProps) {
     return (
-        <li>
+        <li className={className}>
             <NavLink
                 to={to}
                 end={to.endsWith('/dashboard')}

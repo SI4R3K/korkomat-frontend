@@ -2,10 +2,10 @@ import { useEffect, useState, type SubmitEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import { useAuth } from "../../context/AuthContext"
-import { type Subject, type TutorSubject } from "../../types/subject"
-import { tutorGetSubjects } from "../../api/subjectApi"
+import { type Subject, type SubjectLevel, type TutorSubject } from "../../types/subject"
+import { tutorGetMyTutorSubjects, tutorGetSubjects } from "../../api/subjectApi"
 
-const subjectLevels: TutorSubject['level'][] = [
+const subjectLevels: SubjectLevel[] = [
     'PRIMARY_SCHOOL',
     'EIGHT_GRADE_EXAM',
     'HIGH_SCHOOL',
@@ -13,7 +13,7 @@ const subjectLevels: TutorSubject['level'][] = [
     'UNIVERSITY',
 ]
 
-const levelLabels: Record<TutorSubject['level'], string> = {
+const levelLabels: Record<SubjectLevel, string> = {
     PRIMARY_SCHOOL: 'Primary school',
     EIGHT_GRADE_EXAM: 'Eighth-grade exam',
     HIGH_SCHOOL: 'High school',
@@ -35,7 +35,7 @@ function MySubjectsPage() {
     const [isLoadingSubjects, setIsLoadingSubjects] = useState(true)
     const [tutorSubjects, setTutorSubjects] = useState<LocalTutorSubject[]>([])
     const [selectedSubjectId, setSelectedSubjectId] = useState('')
-    const [selectedLevels, setSelectedLevels] = useState<TutorSubject['level'][]>([])
+    const [selectedLevels, setSelectedLevels] = useState<SubjectLevel[]>([])
     const [description, setDescription] = useState('')
     const [createSubjectError, setCreateSubjectError] = useState('')
 
@@ -48,8 +48,15 @@ function MySubjectsPage() {
     const loadSubjects = async () => {
         try {
             setSubjectsError('')
-            const response = await tutorGetSubjects()
-            setSubjects(response)
+            const [availableSubjects, currentTutorSubjects] = await Promise.all([
+                tutorGetSubjects(),
+                tutorGetMyTutorSubjects(),
+            ])
+            setSubjects(availableSubjects)
+            setTutorSubjects(currentTutorSubjects.map((tutorSubject) => ({
+                ...tutorSubject,
+                subjectName: tutorSubject.subjectName,
+            })))
         } catch(error) {
             setSubjectsError(error instanceof Error ? error.message : 'Could not load subjects.')
         } finally {
@@ -61,7 +68,7 @@ function MySubjectsPage() {
         void loadSubjects()
     }, [])
 
-    const toggleLevel = (level: TutorSubject['level']) => {
+    const toggleLevel = (level: SubjectLevel) => {
         setSelectedLevels((currentLevels) => currentLevels.includes(level)
             ? currentLevels.filter((currentLevel) => currentLevel !== level)
             : [...currentLevels, level])
@@ -86,6 +93,7 @@ function MySubjectsPage() {
             ...currentSubjects,
             {
                 id: Date.now(),
+                name: selectedSubject.name,
                 subjectName: selectedSubject.name,
                 level: selectedLevels[0],
                 levels: selectedLevels,
@@ -155,7 +163,7 @@ function MySubjectsPage() {
                             {tutorSubjects.map((tutorSubject) => (
                                 <article key={tutorSubject.id} className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/5%)]">
                                     <h3 className="m-0 text-lg font-bold text-[var(--color-text-primary)]">{tutorSubject.subjectName}</h3>
-                                    <p className="mb-0 mt-2 text-sm font-bold text-[var(--color-primary)]">{tutorSubject.levels.map((level) => levelLabels[level]).join(' · ')}</p>
+                                    <p className="mb-0 mt-2 text-sm font-bold text-[var(--color-primary)]">{tutorSubject.levels.map((level) => levelLabels[level]).join(' · ') || 'Level not provided'}</p>
                                     <p className="mb-0 mt-3 leading-relaxed text-[var(--color-text-secondary)]">{tutorSubject.description}</p>
                                 </article>
                             ))}

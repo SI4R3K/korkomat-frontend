@@ -1,11 +1,15 @@
+export type SubjectLevel =
+    'PRIMARY_SCHOOL' |
+    'EIGHT_GRADE_EXAM' |
+    'HIGH_SCHOOL' |
+    'MATURA_EXAM' |
+    'UNIVERSITY'
+
 export type TutorSubject = {
     id: number,
-    level: 'PRIMARY_SCHOOL' |
-        'EIGHT_GRADE_EXAM' |
-        'HIGH_SCHOOL' |
-        'MATURA_EXAM' |
-        'UNIVERSITY',
-    levels: TutorSubject['level'][]
+    subjectName: string,
+    level: SubjectLevel | null,
+    levels: SubjectLevel[],
     description: string
 }
 

@@ -88,9 +88,7 @@ function Sidebar({ profileType, expanded, setExpanded, onLogout, isLoggingOut }:
                     </div>
                     <ul className="flex flex-1 flex-col gap-1 px-1">
                         {navItems.map((item) => <SidebarItem key={item.text} {...item} />)}
-                        <li className="mt-auto border-t border-[var(--color-border)] pt-3">
-                            <SidebarItem icon={<Cog6ToothIcon />} text="Settings" to={`/${role}/dashboard`} expanded={expanded} />
-                        </li>
+                        <SidebarItem className="mt-auto border-t border-[var(--color-border)] pt-3" icon={<Cog6ToothIcon />} text="Settings" to={`/${role}/dashboard`} expanded={expanded} />
                     </ul>
 
                     <div className="mt-5 border-t border-[var(--color-border)] px-1 pt-4">
