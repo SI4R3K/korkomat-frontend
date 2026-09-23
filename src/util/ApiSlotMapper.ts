@@ -9,6 +9,7 @@ function mapApiSlot(slot: AvailableSlotApiItem): AvailableSlot {
 
     return {
         id: slot.slotId,
+        tutorId: slot.tutorId,
         tutor: slot.tutorName,
         subject: 'Lesson',
         date,

@@ -26,3 +26,9 @@ export type SubjectResponse = {
     id: number,
     name: string
 }
+
+export type CreateTutorSubjectRequest = {
+    subjectId: string,
+    description: string,
+    level: SubjectLevel
+}

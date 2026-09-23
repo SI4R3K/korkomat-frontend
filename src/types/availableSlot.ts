@@ -1,5 +1,6 @@
 export type AvailableSlot = {
     id: number
+    tutorId: string
     tutor: string
     subject: string
     date: string
@@ -11,6 +12,7 @@ export type AvailableSlot = {
 
 export type AvailableSlotApiItem = {
     slotId: number
+    tutorId: string
     tutorName: string
     startTime: string
     endTime: string

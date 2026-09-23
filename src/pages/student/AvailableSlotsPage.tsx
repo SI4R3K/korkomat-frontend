@@ -11,6 +11,7 @@ import type { AvailableSlot } from '../../types/availableSlot'
 import EmptySlotsState from '../../components/ui/slot/EmptySlotsState'
 import SlotFilters from '../../components/ui/slot/SlotFilters'
 import SlotList from '../../components/ui/slot/SlotList'
+import ReservationModal from '../../components/ui/reservation/ReservationModal'
 
 
 type AvailableSlotPageProps = {
@@ -29,6 +30,7 @@ function AvailableSlotPage( { profileType }: AvailableSlotPageProps) {
     const [availableSlots, setAvailableSlots] = useState<AvailableSlot[]>([])
     const [isLoadingSlots, setIsLoadingSlots] = useState(true)
     const [slotsError, setSlotsError] = useState('')
+    const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null)
 
     useEffect(() => {
         const loadSlots = async () => {
@@ -119,12 +121,13 @@ function AvailableSlotPage( { profileType }: AvailableSlotPageProps) {
                             <p className="mb-0 mt-2 text-sm text-[var(--color-danger)]">{slotsError}</p>
                         </div>
                     ) : filteredSlots.length > 0 ? (
-                        <SlotList slots={filteredSlots} />
+                        <SlotList slots={filteredSlots} onBookSlot={setSelectedSlot} />
                     ) : (
                         <EmptySlotsState />
                     )}
                 </div>
             </section>
+            {selectedSlot && <ReservationModal slot={selectedSlot} onClose={() => setSelectedSlot(null)} />}
         </main>
     )
 }

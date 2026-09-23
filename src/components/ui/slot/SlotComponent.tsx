@@ -7,10 +7,14 @@ import {
 import type { AvailableSlot } from "../../../types/availableSlot"
 
 type SlotComponentsProps = {
-    slot: AvailableSlot
+    slot: AvailableSlot,
+    showBookingScreen?: () => void
 }
 
-function SlotComponent({slot}: SlotComponentsProps) {
+function SlotComponent({
+    slot,
+    showBookingScreen,
+}: SlotComponentsProps) {
     return (
         <article className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/5%)] transition hover:-translate-y-0.5 hover:border-[var(--color-primary)] hover:shadow-[0_12px_28px_rgb(25_43_58/10%)]">
             <div className="flex items-start justify-between gap-4">
@@ -25,7 +29,7 @@ function SlotComponent({slot}: SlotComponentsProps) {
                 <span className="flex items-center gap-2"><ClockIcon className="size-4 text-[var(--color-primary)]" />{slot.time}</span>
                 <span className="flex items-center gap-2 sm:col-span-2"><MapPinIcon className="size-4 text-[var(--color-primary)]" />{slot.location}</span>
             </div>
-            <button type="button" className="mt-5 w-full rounded-xl bg-[var(--color-primary)] px-4 py-3 font-bold text-white transition hover:bg-[var(--color-primary-hover)]">Book lesson</button>
+            {showBookingScreen && <button onClick={showBookingScreen} type="button" className="mt-5 w-full rounded-xl bg-[var(--color-primary)] px-4 py-3 font-bold text-white transition hover:bg-[var(--color-primary-hover)]">Book lesson</button>}
         </article>       
     )
 }
