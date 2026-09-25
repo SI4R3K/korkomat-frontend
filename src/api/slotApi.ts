@@ -1,49 +1,18 @@
-import { apiClient } from "./client";
+import { apiClient } from './client'
 
-import type { AvailableSlotApiItem, AvailableSlotsResponse, CreateAvailableSlotRequest } from '../types/availableSlot'
-
-function isSlotItem(value: unknown): value is AvailableSlotApiItem {
-    if (!value || typeof value !== 'object') {
-        return false
-    }
-
-    const item = value as Record<string, unknown>
-    return typeof item.startTime === 'string' && typeof item.endTime === 'string'
-}
-
-function findSlotCollection(value: unknown): unknown[] | null {
-    if (Array.isArray(value)) {
-        return value.length === 0 || value.some(isSlotItem) ? value : null
-    }
-
-    if (!value || typeof value !== 'object') {
-        return null
-    }
-
-    const object = value as Record<string, unknown>
-    const preferredKeys = ['allAvailableSlots', 'availableSlots', 'availableSlot', 'slots', 'content']
-
-    for (const key of preferredKeys) {
-        const collection = findSlotCollection(object[key])
-        if (collection) {
-            return collection
-        }
-    }
-
-    for (const nestedValue of Object.values(object)) {
-        const collection = findSlotCollection(nestedValue)
-        if (collection) {
-            return collection
-        }
-    }
-
-    return null
-}
+import type { AvailableSlotsResponse, CreateAvailableSlotRequest } from '../types/availableSlot'
 
 function normalizeAvailableSlots(payload: unknown): AvailableSlotsResponse {
-    const slots = findSlotCollection(payload) ?? []
+    const data = (payload as { data?: { allAvailableSlots?: unknown; availableSlots?: unknown } } | undefined)?.data ?? payload
+    const resolvedData = data as { allAvailableSlots?: unknown[]; availableSlots?: unknown[] }
 
-    return { allAvailableSlots: slots as AvailableSlotApiItem[] }
+    const allAvailableSlots = Array.isArray(resolvedData.allAvailableSlots)
+        ? resolvedData.allAvailableSlots
+        : Array.isArray(resolvedData.availableSlots)
+            ? resolvedData.availableSlots
+            : []
+
+    return { allAvailableSlots: allAvailableSlots as AvailableSlotsResponse['allAvailableSlots'] }
 }
 
 export async function studentGetSlots(): Promise<AvailableSlotsResponse> {

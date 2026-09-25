@@ -2,10 +2,11 @@ import { useEffect, useState, type SubmitEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import { useAuth } from "../../context/AuthContext"
-import { type Subject, type SubjectLevel, type TutorSubject, type CreateTutorSubjectRequest } from "../../types/subject"
+import { type Subject, type SubjectLevel, type TutorSubject } from "../../types/subject"
 import { tutorGetMyTutorSubjects, tutorGetSubjects, tutorAddMyTutorSubject } from "../../api/subjectApi"
 import TutorSubjectComponent from "../../components/ui/subject/SubjectComponent"
 import SubjectForm from "../../components/ui/subject/SubjectForm"
+import HeaderComponent from '../../components/ui/header/HeaderComponent'
 
 type LocalTutorSubject = TutorSubject & {
     subjectName: string
@@ -21,7 +22,7 @@ function MySubjectsPage() {
     const [isLoadingSubjects, setIsLoadingSubjects] = useState(true)
     const [tutorSubjects, setTutorSubjects] = useState<LocalTutorSubject[]>([])
     const [selectedSubjectId, setSelectedSubjectId] = useState('')
-    const [selectedLevels, setSelectedLevels] = useState<SubjectLevel[]>([])
+    const [selectedLevel, setSelectedLevel] = useState<SubjectLevel | ''>('')
     const [description, setDescription] = useState('')
     const [createSubjectError, setCreateSubjectError] = useState('')
 
@@ -54,18 +55,12 @@ function MySubjectsPage() {
         void loadSubjects()
     }, [])
 
-    const toggleLevel = (level: SubjectLevel) => {
-        setSelectedLevels((currentLevels) => currentLevels.includes(level)
-            ? currentLevels.filter((currentLevel) => currentLevel !== level)
-            : [...currentLevels, level])
-    }
-
-    const handleAddSubject = (event: SubmitEvent<HTMLFormElement>) => {
+    const handleAddSubject = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
         setCreateSubjectError('')
 
-        if (!selectedSubjectId || selectedLevels.length === 0 || !description.trim()) {
-            setCreateSubjectError('Choose a subject, select at least one level, and add a description.')
+        if (!selectedSubjectId || !selectedLevel || !description.trim()) {
+            setCreateSubjectError('Choose a subject, select a level, and add a description.')
             return
         }
 
@@ -75,26 +70,49 @@ function MySubjectsPage() {
             return
         }
 
-        tutorAddMyTutorSubject({
-            subjectId: selectedSubjectId,
-            description,
-            level: selectedLevels[0],
-        })
+        const duplicateSubject = tutorSubjects.some((tutorSubject) =>
+            tutorSubject.subjectName === selectedSubject.name && tutorSubject.levels.includes(selectedLevel),
+        )
+        if (duplicateSubject) {
+            setCreateSubjectError('You already teach this subject at the selected level.')
+            return
+        }
 
-        setTutorSubjects((currentSubjects) => [
-            ...currentSubjects,
-            {
-                id: Date.now(),
-                name: selectedSubject.name,
-                subjectName: selectedSubject.name,
-                level: selectedLevels[0],
-                levels: selectedLevels,
-                description: description.trim(),
-            },
-        ])
-        setSelectedSubjectId('')
-        setSelectedLevels([])
-        setDescription('')
+        try {
+            await tutorAddMyTutorSubject({
+                subjectId: selectedSubjectId,
+                description,
+                level: selectedLevel,
+            })
+
+            setTutorSubjects((currentSubjects) => [
+                ...currentSubjects,
+                {
+                    id: Date.now(),
+                    name: selectedSubject.name,
+                    subjectName: selectedSubject.name,
+                    level: selectedLevel,
+                    levels: [selectedLevel],
+                    description: description.trim(),
+                },
+            ])
+            setSelectedSubjectId('')
+            setSelectedLevel('')
+            setDescription('')
+        } catch (error) {
+            let errorMessage = error instanceof Error ? error.message : ''
+
+            try {
+                const response = JSON.parse(errorMessage) as { message?: string }
+                errorMessage = response.message ?? errorMessage
+            } catch {
+                // Keep the original message when the API response is not JSON.
+            }
+
+            setCreateSubjectError(errorMessage === 'Tutor subject already exists'
+                ? 'You already teach this subject at the selected level.'
+                : errorMessage || 'Could not create the subject.')
+        }
     }
 
     return (
@@ -102,19 +120,20 @@ function MySubjectsPage() {
             <MakeSidebar profileType="Tutor" expanded={sidebarExpanded} setExpanded={setSidebarExpanded} onLogout={handleLogout} isLoggingOut={isLoggingOut}/>
             <section className={`min-h-screen pl-0 transition-all ${sidebarExpanded ? 'sm:pl-[280px]' : 'sm:pl-[84px]'}`}>
                 <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-10 sm:py-10">
-                    <header className="mb-6">
-                    <span className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--color-primary)]">Tutor workspace</span>
-                        <h1 className="mb-2 mt-2 text-3xl font-bold text-[var(--color-text-primary)] sm:text-[42px]">Manage your subjects</h1>
-                        <p className="m-0 max-w-xl leading-relaxed text-[var(--color-text-secondary)]">Tell students which subjects and levels you teach.</p>
-                    </header>
+                    <HeaderComponent
+                        profileType='Tutor'
+                        title='workspace'
+                        subtitle='Manage your subjects'
+                        subsubtitle='Tell students which subjects and levels you teach.'
+                    />
 
                     <SubjectForm
                         handleAddSubject={handleAddSubject}
                         handleSubjectChange={setSelectedSubjectId}
                         handleDescriptionChange={setDescription}
-                        toggleLevel={toggleLevel}
+                        selectedLevel={selectedLevel}
+                        handleLevelChange={setSelectedLevel}
                         selectedSubjectId={selectedSubjectId}
-                        selectedLevels={selectedLevels}
                         subjects={subjects}
                         description={description}
                         createSubjectError={createSubjectError}

@@ -1,6 +1,6 @@
 
 import { useNavigate } from 'react-router-dom'
-import { useUserDetails } from '../../context/UserContext'
+import { useUserDetails } from '../../../context/UserContext'
 
 type SelectProfileProps = {
     profileType: 'Student' | 'Tutor',
@@ -23,9 +23,6 @@ function SelectProfileContainer({
         navigate(profileExists
             ? `/${profileKey}/dashboard`
             : `/register/${profileKey}`)
-
-        console.log(studentProfileId)
-        console.log(tutorProfileId)
     }
     
     return (

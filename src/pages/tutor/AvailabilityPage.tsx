@@ -10,6 +10,7 @@ import { useAuth } from "../../context/AuthContext"
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import mapApiSlot from "../../util/ApiSlotMapper"
 import { tutorCreateSlot, tutorGetSlots } from "../../api/slotApi"
+import HeaderComponent from '../../components/ui/header/HeaderComponent'
 
 function AvailabilityPage() {
     const { logout } = useAuth()
@@ -84,11 +85,12 @@ function AvailabilityPage() {
             <MakeSidebar profileType="Tutor" expanded={sidebarExpanded} setExpanded={setSidebarExpanded} onLogout={handleLogout} isLoggingOut={isLoggingOut}/>
             <section className={`min-h-screen pl-0 transition-all ${sidebarExpanded ? 'sm:pl-[280px]' : 'sm:pl-[84px]'}`}>
                 <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-10 sm:py-10">
-                    <header className="mb-6">
-                        <span className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--color-primary)]">Tutor workspace</span>
-                        <h1 className="mb-2 mt-2 text-3xl font-bold text-[var(--color-text-primary)] sm:text-[42px]">Manage your availability</h1>
-                        <p className="m-0 max-w-xl leading-relaxed text-[var(--color-text-secondary)]">Add times when students can book a lesson with you.</p>
-                    </header>
+                    <HeaderComponent
+                        profileType='Tutor'
+                        title='workspace'
+                        subtitle='Manage your availability'
+                        subsubtitle='Add times when students can book a lesson with you.'
+                    />
 
                     <form onSubmit={handleCreateSlot} className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/8%)] sm:p-6">
                         <h2 className="m-0 text-xl font-bold text-[var(--color-text-primary)]">Add a time slot</h2>

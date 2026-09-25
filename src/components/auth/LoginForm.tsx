@@ -5,8 +5,8 @@ import {
 
 import { useNavigate } from 'react-router-dom'
 
-import Button from '../ui/Button'
-import Input from '../ui/Input'
+import Button from '../ui/button/Button'
+import Input from '../ui/input/Input'
 
 import { useAuth } from '../../context/AuthContext'
 
@@ -40,11 +40,8 @@ function LoginForm() {
                 email,
                 password
             })
-
             const userDetails = await getDetails()
             
-            console.log(userDetails)
-
             navigate('/select-profile')
 
         } catch (error) {

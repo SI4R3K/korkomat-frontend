@@ -12,6 +12,7 @@ import EmptySlotsState from '../../components/ui/slot/EmptySlotsState'
 import SlotFilters from '../../components/ui/slot/SlotFilters'
 import SlotList from '../../components/ui/slot/SlotList'
 import ReservationModal from '../../components/ui/reservation/ReservationModal'
+import HeaderComponent from '../../components/ui/header/HeaderComponent'
 
 
 type AvailableSlotPageProps = {
@@ -87,11 +88,13 @@ function AvailableSlotPage( { profileType }: AvailableSlotPageProps) {
             <MakeSidebar profileType={profileType || 'Student'} expanded={sidebarExpanded} setExpanded={setSidebarExpanded} onLogout={handleLogout} isLoggingOut={isLoggingOut} />
             <section className={`min-h-screen pl-0 transition-all ${sidebarExpanded ? 'sm:pl-[280px]' : 'sm:pl-[84px]'}`}>
                 <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-10 sm:py-10">
-                    <header className="mb-6">
-                        <span className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--color-primary)]">Student workspace</span>
-                        <h1 className="mb-2 mt-2 text-3xl font-bold text-[var(--color-text-primary)] sm:text-[42px]">Find your next lesson</h1>
-                        <p className="m-0 max-w-xl leading-relaxed text-[var(--color-text-secondary)]">Search available tutors and choose a time that works for you.</p>
-                    </header>
+
+                    <HeaderComponent 
+                        profileType={profileType} 
+                        title='workspace' 
+                        subtitle='Find your next lesson' 
+                        subsubtitle='Search available tutors and choose a time that works for you.' 
+                    />
 
                     <SlotFilters
                         searchQuery={searchQuery}

@@ -1,4 +1,4 @@
-import SelectProfileContainer from "../../components/ui/SelectProfileContainer"
+import SelectProfileContainer from "../../components/ui/profile/SelectProfileContainer"
 
 function ProfileSelectionPage() {
     return (

@@ -9,8 +9,8 @@ function mapApiSlot(slot: AvailableSlotApiItem): AvailableSlot {
 
     return {
         id: slot.slotId,
-        tutorId: slot.tutorId,
-        tutor: slot.tutorName,
+        tutorProfileId: slot.tutorProfileId ?? '',
+        tutor: slot.tutorName ?? 'Unknown tutor',
         subject: 'Lesson',
         date,
         dateLabel: new Intl.DateTimeFormat('en-US', {
@@ -20,12 +20,12 @@ function mapApiSlot(slot: AvailableSlotApiItem): AvailableSlot {
             timeZone: 'UTC',
         }).format(start),
         time: `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })}`,
-        format: 
-            slot.type === 'IN_PERSON' 
-            ? 'In person' 
-            : slot.type === 'ONLINE' 
-                ? 'Online'
-                : 'Any',
+        format:
+            slot.type === 'IN_PERSON'
+                ? 'In person'
+                : slot.type === 'ONLINE'
+                    ? 'Online'
+                    : 'Any',
         location: slot.type === 'IN_PERSON'
             ? 'In-person lesson'
             : slot.type === 'ONLINE'

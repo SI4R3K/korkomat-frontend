@@ -38,7 +38,15 @@ function ReservationForm({
     }
 
     useEffect(() => {
-        const loadTutorsSubjects = async(tutorId: string) => {
+        const loadTutorsSubjects = async(tutorId?: string) => {
+
+            if (!tutorId) {
+                setLoadedSubjects([])
+                setTutorsSubjectsError('Tutor information is unavailable.')
+                setIsLoadingTutorsSubjects(false)
+                return
+            }
+
             try {
                 setTutorsSubjectsError('')
                 const response = await studentGetTutorsSubjects(tutorId)
@@ -54,9 +62,8 @@ function ReservationForm({
                 setIsLoadingTutorsSubjects(false)
             }
         }
-        console.log(slot.tutorId) // why is it undefined???
-        void loadTutorsSubjects('7fd9ceda-bc3f-40a1-bd50-120da2cd555d')
-    }, [slot.tutorId])
+        void loadTutorsSubjects(slot.tutorProfileId)
+    }, [slot.tutorProfileId])
 
     return (
         <div>
@@ -101,7 +108,7 @@ function ReservationForm({
                                     const isSelected = selectedSubject?.id === subject.id
 
                                     return (
-                                        <button key={subject.id} type="button" onClick={() => selectSubject(subject)} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 mr-1 mt-1 text-left transition ${isSelected ? 'bg-[var(--color-primary-soft)]' : 'hover:bg-[var(--color-background)]'}`}>
+                                        <button key={subject.subjectName+subject.level} type="button" onClick={() => selectSubject(subject)} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 mr-1 mt-1 text-left transition ${isSelected ? 'bg-[var(--color-primary-soft)]' : 'hover:bg-[var(--color-background)]'}`}>
                                             <span className="min-w-0 flex-1">
                                                 <span className="block font-bold text-[var(--color-text-primary)]">{subject.subjectName}</span>
                                                 <span className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-[var(--color-text-secondary)]">

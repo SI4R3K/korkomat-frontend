@@ -5,9 +5,9 @@ interface SubjectFormProps {
     handleAddSubject: (event: SubmitEvent<HTMLFormElement>) => void,
     handleSubjectChange: (subjectId: string) => void,
     handleDescriptionChange: (description: string) => void,
-    toggleLevel: (level: SubjectLevel) => void,
+    handleLevelChange: (level: SubjectLevel | '') => void,
     selectedSubjectId: string,
-    selectedLevels: SubjectLevel[],
+    selectedLevel: SubjectLevel | '',
     subjects: Subject[],
     description: string,
     createSubjectError: string,
@@ -33,9 +33,9 @@ function SubjectForm({
     handleAddSubject,
     handleSubjectChange,
     handleDescriptionChange,
-    toggleLevel, 
+    handleLevelChange,
     selectedSubjectId,
-    selectedLevels,
+    selectedLevel,
     subjects,
     description,
     createSubjectError,
@@ -53,15 +53,13 @@ function SubjectForm({
                 </label>
 
                 <fieldset>
-                    <legend className="text-sm font-bold text-[var(--color-text-primary)]">Levels you teach</legend>
-                    <div className="mt-2 grid gap-2 sm:grid-cols-2">
-                        {subjectLevels.map((level) => (
-                            <label key={level} className="flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--color-border)] px-3 py-3 text-sm text-[var(--color-text-primary)] transition hover:border-[var(--color-primary)]">
-                                <input type="checkbox" checked={selectedLevels.includes(level)} onChange={() => toggleLevel(level)} className="h-4 w-4 accent-[var(--color-primary)]" />
-                                {levelLabels[level]}
-                            </label>
-                        ))}
-                    </div>
+                    <label className="flex flex-col gap-2 text-sm font-bold text-[var(--color-text-primary)]" htmlFor="subject-level">
+                        Level you teach
+                        <select id="subject-level" required value={selectedLevel} onChange={(event) => handleLevelChange(event.target.value as SubjectLevel | '')} className="rounded-xl border border-[var(--color-border)] bg-white px-3 py-3 font-normal outline-none focus:border-[var(--color-border-focus)] focus:ring-4 focus:ring-[var(--color-primary-soft)]">
+                            <option value="">Select a level</option>
+                            {subjectLevels.map((level) => <option key={level} value={level}>{levelLabels[level]}</option>)}
+                        </select>
+                    </label>
                 </fieldset>
             </div>
 

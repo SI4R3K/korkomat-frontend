@@ -20,7 +20,9 @@ function SlotComponent({
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="m-0 text-sm font-bold uppercase tracking-[0.06em] text-[var(--color-primary)]">{slot.subject}</p>
-                    <h3 className="mb-0 mt-2 text-xl font-bold text-[var(--color-text-primary)]">{slot.tutor}</h3>
+                    <h3 className="mb-0 mt-2 text-xl font-bold text-[var(--color-text-primary)]">
+                        {slot.tutor === 'Unknown tutor' ? '' : slot.tutor}
+                    </h3>
                 </div>
                 <span className="rounded-full bg-[var(--color-primary-soft)] px-3 py-1 text-xs font-bold text-[var(--color-primary)]">{slot.format}</span>
             </div>

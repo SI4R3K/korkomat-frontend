@@ -1,6 +1,10 @@
+export type ApiResponse<T> = {
+    data?: T
+}
+
 export type AvailableSlot = {
     id: number
-    tutorId: string
+    tutorProfileId?: string
     tutor: string
     subject: string
     date: string
@@ -12,11 +16,13 @@ export type AvailableSlot = {
 
 export type AvailableSlotApiItem = {
     slotId: number
-    tutorId: string
-    tutorName: string
+    tutorProfileId?: string
+    tutorName?: string
     startTime: string
     endTime: string
     type: 'ONLINE' | 'IN_PERSON' | 'OPTIONAL'
+    status?: string
+    lessonId?: number | null
 }
 
 export type AvailableSlotsResponse = {

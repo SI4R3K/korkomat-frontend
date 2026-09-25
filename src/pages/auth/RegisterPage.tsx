@@ -1,8 +1,8 @@
 import { useState, type SubmitEvent } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-import Button from '../../components/ui/Button'
-import Input from '../../components/ui/Input'
+import Button from '../../components/ui/button/Button'
+import Input from '../../components/ui/input/Input'
 import { register } from '../../api/authApi'
 import { createProfile, type ProfileType } from '../../api/profileApi'
 import { useUserDetails } from '../../context/UserContext'
