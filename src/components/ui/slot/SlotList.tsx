@@ -6,7 +6,10 @@ type SlotListProps = {
     onBookSlot?: (slot: AvailableSlot) => void
 }
 
-function SlotList({ slots, onBookSlot }: SlotListProps) {
+function SlotList({ 
+    slots, 
+    onBookSlot 
+}: SlotListProps) {
     return (
         <section className="grid gap-4 md:grid-cols-2" aria-label="Available time slots">
             {slots.map((slot) => (

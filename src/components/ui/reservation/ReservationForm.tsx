@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { BookOpenIcon, CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { studentGetTutorsSubjects } from "../../../api/subjectApi"
+import { studentBookLesson } from "../../../api/lessonApi"
 import type { AvailableSlot } from "../../../types/availableSlot"
-import type { TutorSubject } from "../../../types/subject"
+import type { TutorSubjectPayload } from "../../../types/subject"
 
 interface ReservationFromProps {
     slot: AvailableSlot
@@ -14,34 +15,55 @@ function ReservationForm({
     onClose,
 }: ReservationFromProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedSubject, setSelectedSubject] = useState<TutorSubject | null>(null)
+    const [selectedSubject, setSelectedSubject] = useState<TutorSubjectPayload | null>(null)
+    const [place, setPlace] = useState('')
+    const [bookingError, setBookingError] = useState('')
+    const [isBooking, setIsBooking] = useState(false)
     const [tutorsSubjectsError, setTutorsSubjectsError] = useState('')
-    const [loadedSubjects, setLoadedSubjects] = useState<TutorSubject[] | null>(null)
+    const [loadedTutorSubjects, setLoadedTutorSubjects] = useState<TutorSubjectPayload[] | null>(null)
     const [isLoadingTutorsSubjects, setIsLoadingTutorsSubjects] = useState(true)
 
     const toggleMenu = () => {
         setIsOpen((currentValue) => !currentValue)
     }
 
-    const selectSubject = (subject: TutorSubject) => {
+    const selectSubject = (subject: TutorSubjectPayload) => {
         setSelectedSubject(subject)
         setIsOpen(false)
     }
 
     const formatLevel = (level: string) => level.replaceAll('_', ' ').toLowerCase().replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())
 
-    const availableSubjects = loadedSubjects ?? []
+    const availableSubjects = loadedTutorSubjects ?? []
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
-        onClose()
+
+        if (!selectedSubject) {
+            setBookingError('Select a subject before booking the lesson.')
+            return
+        }
+
+        try {
+            setBookingError('')
+            setIsBooking(true)
+            await studentBookLesson(slot.id, {
+                tutorSubjectId: selectedSubject.subjectId,
+                place: place.trim() || undefined,
+            })
+            onClose()
+        } catch (error) {
+            setBookingError(error instanceof Error ? error.message : 'Could not book the lesson.')
+        } finally {
+            setIsBooking(false)
+        }
     }
 
     useEffect(() => {
         const loadTutorsSubjects = async(tutorId?: string) => {
 
             if (!tutorId) {
-                setLoadedSubjects([])
+                setLoadedTutorSubjects([])
                 setTutorsSubjectsError('Tutor information is unavailable.')
                 setIsLoadingTutorsSubjects(false)
                 return
@@ -50,8 +72,7 @@ function ReservationForm({
             try {
                 setTutorsSubjectsError('')
                 const response = await studentGetTutorsSubjects(tutorId)
-                setLoadedSubjects(response)
-
+                setLoadedTutorSubjects(response)
                 if (response.length === 0) {
                     setTutorsSubjectsError('Selected tutor has not provided any subjects yet.')
                 }
@@ -105,16 +126,14 @@ function ReservationForm({
                                 </div>
                             ) : (
                                 availableSubjects.map((subject) => {
-                                    const isSelected = selectedSubject?.id === subject.id
+                                    const isSelected = selectedSubject?.subjectId === subject.subjectId
 
                                     return (
-                                        <button key={subject.subjectName+subject.level} type="button" onClick={() => selectSubject(subject)} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 mr-1 mt-1 text-left transition ${isSelected ? 'bg-[var(--color-primary-soft)]' : 'hover:bg-[var(--color-background)]'}`}>
+                                        <button key={subject.subjectId} type="button" onClick={() => selectSubject(subject)} className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 mr-1 mt-1 text-left transition ${isSelected ? 'bg-[var(--color-primary-soft)]' : 'hover:bg-[var(--color-background)]'}`}>
                                             <span className="min-w-0 flex-1">
                                                 <span className="block font-bold text-[var(--color-text-primary)]">{subject.subjectName}</span>
-                                                <span className="mt-0.5 flex flex-wrap gap-x-2 text-xs text-[var(--color-text-secondary)]">
-                                                    {(subject.levels.length > 0 ? subject.levels : subject.level ? [subject.level] : []).map((level) => (
-                                                        <span key={level}>{formatLevel(level)}</span>
-                                                    ))}
+                                                <span className="mt-0.5 block text-xs text-[var(--color-text-secondary)]">
+                                                    {subject.level ? formatLevel(subject.level) : 'Level not provided'}
                                                 </span>
                                             </span>
                                             {isSelected && <CheckIcon className="size-4 shrink-0 text-[var(--color-primary)]" />}
@@ -138,13 +157,18 @@ function ReservationForm({
             </div>
 
             <form onSubmit={handleSubmit}>
-                <label className="mt-6 flex flex-col gap-2 text-sm font-bold text-[var(--color-text-primary)]" htmlFor="reservation-note">
+                <label className="mt-6 flex flex-col gap-2 text-sm font-bold text-[var(--color-text-primary)]" htmlFor="lesson-place">
+                    Lesson place <span className="font-normal text-[var(--color-text-secondary)]">(optional)</span>
+                    <input id="lesson-place" maxLength={255} value={place} onChange={(event) => setPlace(event.target.value)} placeholder="For example, online or Main Street 12" className="rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 font-normal outline-none focus:border-[var(--color-border-focus)] focus:ring-4 focus:ring-[var(--color-primary-soft)]" />
+                </label>
+                <label className="mt-6 flex flex-col gap-2 text-sm font-bold text-[var(--color-text-primary)]" htmlFor="lesson-place">
                     Add a note <span className="font-normal text-[var(--color-text-secondary)]">(optional)</span>
                     <textarea id="reservation-note" rows={4} maxLength={500} placeholder="Tell the tutor what you would like to focus on..." className="resize-y rounded-xl border border-[var(--color-border)] bg-white px-4 py-3 font-normal outline-none focus:border-[var(--color-border-focus)] focus:ring-4 focus:ring-[var(--color-primary-soft)]" />
                 </label>
+                {bookingError && <p className="mb-0 mt-4 text-sm text-[var(--color-danger)]" role="alert">{bookingError}</p>}
                 <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                    <button type="button" onClick={onClose} className="rounded-xl border border-[var(--color-border)] px-5 py-3 font-bold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background)]">Cancel</button>
-                    <button type="submit" disabled={!selectedSubject} className="rounded-xl bg-[var(--color-primary)] px-5 py-3 font-bold text-white transition hover:bg-[var(--color-primary-hover)] disabled:cursor-not-allowed disabled:opacity-50">Request lesson</button>
+                    <button type="button" onClick={onClose} disabled={isBooking} className="rounded-xl border border-[var(--color-border)] px-5 py-3 font-bold text-[var(--color-text-primary)] transition hover:bg-[var(--color-background)] disabled:cursor-not-allowed disabled:opacity-50">Cancel</button>
+                    <button type="submit" disabled={!selectedSubject || isBooking} className="rounded-xl bg-[var(--color-primary)] px-5 py-3 font-bold text-white transition hover:bg-[var(--color-primary-hover)] disabled:cursor-not-allowed disabled:opacity-50">{isBooking ? 'Booking...' : 'Request lesson'}</button>
                 </div>
             </form>
         </div>

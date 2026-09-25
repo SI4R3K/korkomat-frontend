@@ -19,7 +19,7 @@ function TutorSubjectComponent({tutorSubjects}: SubjectComponentProps) {
             {tutorSubjects.map((tutorSubject) => (
                 <article key={tutorSubject.id} className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/5%)]">
                     <h3 className="m-0 text-lg font-bold text-[var(--color-text-primary)]">{tutorSubject.subjectName}</h3>
-                    <p className="mb-0 mt-2 text-sm font-bold text-[var(--color-primary)]">{tutorSubject.levels.map((level) => levelLabels[level]).join(' · ') || 'Level not provided'}</p>
+                    <p className="mb-0 mt-2 text-sm font-bold text-[var(--color-primary)]">{tutorSubject.level ? levelLabels[tutorSubject.level] : 'Level not provided'}</p>
                     <p className="mb-0 mt-3 leading-relaxed text-[var(--color-text-secondary)]">{tutorSubject.description}</p>
                 </article>
             ))}

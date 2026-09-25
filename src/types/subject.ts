@@ -9,7 +9,6 @@ export type TutorSubject = {
     id: number,
     subjectName: string,
     level: SubjectLevel | null,
-    levels: SubjectLevel[],
     description: string
 }
 
@@ -31,4 +30,23 @@ export type CreateTutorSubjectRequest = {
     subjectId: string,
     description: string,
     level: SubjectLevel
+}
+
+export type ApiSubjectResponse = {
+    data: {
+        subjects: Subject[]
+    }
+}
+
+export type TutorSubjectResponse = {
+    data: {
+        tutorSubjects: TutorSubjectPayload[]
+    }
+}
+
+export type TutorSubjectPayload = {
+    subjectId: number
+    subjectName: string
+    level?: SubjectLevel
+    description: string
 }

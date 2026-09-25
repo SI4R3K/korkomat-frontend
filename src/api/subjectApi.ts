@@ -1,26 +1,14 @@
 import { apiClient } from "./client";
 
-import type { Subject, SubjectLevel, TutorSubject, CreateTutorSubjectRequest } from "../types/subject";
+import type { 
+    Subject,  
+    TutorSubject, 
+    TutorSubjectPayload,
+    CreateTutorSubjectRequest,
+    ApiSubjectResponse,
+    TutorSubjectResponse,
+} from "../types/subject";
 
-type SubjectResponse = {
-    data: {
-        subjects: Subject[]
-    }
-}
-
-type TutorSubjectResponse = {
-    data: {
-        tutorSubjects: TutorSubjectPayload[]
-    }
-}
-
-type TutorSubjectPayload = {
-    id: number
-    subjectName: string
-    level?: SubjectLevel | SubjectLevel[]
-    levels?: SubjectLevel[]
-    description: string
-}
 
 export async function tutorGetSubjects(): Promise<Subject[]> {
     const endpoint = '/tutor/subjects'
@@ -34,7 +22,7 @@ export async function tutorGetSubjects(): Promise<Subject[]> {
         throw new Error(message || 'Getting subjects failed')
     }
 
-    const payload: SubjectResponse = await response.json()
+    const payload: ApiSubjectResponse = await response.json()
     
     return payload.data.subjects
 }
@@ -54,13 +42,11 @@ export async function tutorGetMyTutorSubjects(): Promise<TutorSubject[]> {
     const payload: TutorSubjectResponse = await response.json()
     
     return payload.data.tutorSubjects.map((tutorSubject) => {
-        const levels = tutorSubject.levels
-            ?? (Array.isArray(tutorSubject.level) ? tutorSubject.level : tutorSubject.level ? [tutorSubject.level] : [])
-
         return {
-            ...tutorSubject,
-            level: levels[0] ?? null,
-            levels,
+            id: tutorSubject.subjectId,
+            subjectName: tutorSubject.subjectName,
+            level: tutorSubject.level ?? null,
+            description: tutorSubject.description,
         }
     })
 }
@@ -79,7 +65,7 @@ export async function tutorAddMyTutorSubject(tutorSubject: CreateTutorSubjectReq
     }
 }
 
-export async function studentGetTutorsSubjects(tutorId: string): Promise<TutorSubject[]> {
+export async function studentGetTutorsSubjects(tutorId: string): Promise<TutorSubjectPayload[]> {
     const endpoint = `/student/subjects/${tutorId}`
 
     const response = await apiClient(endpoint, {
@@ -92,15 +78,6 @@ export async function studentGetTutorsSubjects(tutorId: string): Promise<TutorSu
     }
 
     const payload: TutorSubjectResponse = await response.json()
-    
-    return payload.data.tutorSubjects.map((tutorSubject) => {
-        const levels = tutorSubject.levels
-            ?? (Array.isArray(tutorSubject.level) ? tutorSubject.level : tutorSubject.level ? [tutorSubject.level] : [])
 
-        return {
-            ...tutorSubject,
-            level: levels[0] ?? null,
-            levels,
-        }
-    })
+    return payload.data.tutorSubjects
 }

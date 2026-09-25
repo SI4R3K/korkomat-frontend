@@ -71,7 +71,7 @@ function MySubjectsPage() {
         }
 
         const duplicateSubject = tutorSubjects.some((tutorSubject) =>
-            tutorSubject.subjectName === selectedSubject.name && tutorSubject.levels.includes(selectedLevel),
+            tutorSubject.subjectName === selectedSubject.name && tutorSubject.level === selectedLevel,
         )
         if (duplicateSubject) {
             setCreateSubjectError('You already teach this subject at the selected level.')
@@ -92,7 +92,6 @@ function MySubjectsPage() {
                     name: selectedSubject.name,
                     subjectName: selectedSubject.name,
                     level: selectedLevel,
-                    levels: [selectedLevel],
                     description: description.trim(),
                 },
             ])
