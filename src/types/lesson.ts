@@ -29,6 +29,7 @@ export interface TutorLesson {
     startTime: string,
     endTime: string,
     place: string,
+    format: 'ONLINE' | 'IN_PERSON' | 'OPTIONAL',
     subjectName: string,
     level: SubjectLevel,
     studentName: string,
@@ -40,11 +41,12 @@ export interface StudentLesson {
     startTime: string,
     endTime: string,
     place: string,
+    format: 'ONLINE' | 'IN_PERSON' | 'OPTIONAL',
     subjectName: string,
     tutorName: string,
 }
 
 export type LessonStatus = 
     'PENDING'   | 
-    'CONFIRMET' |
+    'CONFIRMED' |
     'REJECTED'

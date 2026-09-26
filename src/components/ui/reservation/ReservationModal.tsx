@@ -6,9 +6,10 @@ import ReservationInfo from './ReservationInfo'
 type ReservationModalProps = {
     slot: AvailableSlot
     onClose: () => void
+    onBooked: () => Promise<void>
 }
 
-function ReservationModal({ slot, onClose }: ReservationModalProps) {
+function ReservationModal({ slot, onClose, onBooked }: ReservationModalProps) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-[rgb(25_43_58/45%)] p-0 sm:items-center sm:p-5" role="presentation" onMouseDown={onClose}>
@@ -23,7 +24,7 @@ function ReservationModal({ slot, onClose }: ReservationModalProps) {
 
                 <ReservationInfo slot={slot} />
        
-                <ReservationForm slot={slot} onClose={onClose} />
+                <ReservationForm slot={slot} onClose={onClose} onBooked={onBooked} />
             </section>
         </div>
     )

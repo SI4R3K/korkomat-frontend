@@ -3,8 +3,8 @@ import HeaderComponent from "../../components/ui/header/HeaderComponent"
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import { useAuth } from "../../context/AuthContext"
 import { useNavigate } from "react-router-dom"
-import EmptySlotsState from "../../components/ui/slot/EmptySlotsState"
-import { tutorGetLessons } from "../../api/lessonApi"
+import EmptyState from "../../components/ui/EmptyState"
+import { tutorAcceptReservation, tutorGetLessons, tutorRejectReservation } from "../../api/lessonApi"
 import type { TutorLesson } from "../../types/lesson"
 import LessonList from "../../components/ui/lesson/LessonList"
 
@@ -16,6 +16,13 @@ function TutorLessonsPage() {
     const [isLoadingLessons, setIsLoadingLessons] = useState(true)
     const [lessonsError, setLessonsError] = useState('')
     const [lessons, setLessons] = useState<TutorLesson[]>([])
+    const [isLoadingReservedSlots, setIsLoadingReservedSlots] = useState(true)
+    const [reservedLessonsError, setReservedLessonsError] = useState('')
+    const [reservedLessons, setReservedLessons] = useState<TutorLesson[]>([])
+    const [acceptingLessonId, setAcceptingLessonId] = useState<number | null>(null)
+    const [acceptError, setAcceptError] = useState('')
+    const [rejectingLessonId, setRejectingLessonId] = useState<number | null>(null)
+    const [rejectError, setRejectError] = useState('')
 
     const handleLogout = async () => {
         setIsLoggingOut(true)
@@ -23,10 +30,36 @@ function TutorLessonsPage() {
         navigate('/login', {replace: true})
     }
 
+    const handleAcceptReservedLesson = async (lessonId: number) => {
+        try {
+            setAcceptingLessonId(lessonId)
+            setAcceptError('')
+            await tutorAcceptReservation(lessonId)
+            await Promise.all([loadLessons(), loadReservedLessons()])
+        } catch(error) {
+            setAcceptError(error instanceof Error ? error.message : 'Could not accept reserved lesson.')
+        } finally {
+            setAcceptingLessonId(null)
+        }
+    }
+    
+    const handleRejectReservedLesson = async (lessonId: number) => {
+        try {
+            setRejectingLessonId(lessonId)
+            setRejectError('')
+            await tutorRejectReservation(lessonId)
+            await Promise.all([loadLessons(), loadReservedLessons()])
+        } catch(error) {
+            setRejectError(error instanceof Error ? error.message : 'Could not reject reserved lesson.')
+        } finally {
+            setRejectingLessonId(null)
+        }
+    }
+
     const loadLessons = async () => {
         try {
             setLessonsError('')
-            const response = await tutorGetLessons('PENDING')
+            const response = await tutorGetLessons('CONFIRMED')
             setLessons(response.data.lessons)
         } catch (error) {
             setLessonsError(error instanceof Error ? error.message : 'Could not load lessons.')
@@ -35,8 +68,21 @@ function TutorLessonsPage() {
         }
     }
 
+    const loadReservedLessons = async () => {
+        try {
+            setReservedLessonsError('')
+            const response = await tutorGetLessons('PENDING')
+            setReservedLessons(response.data.lessons)
+        } catch(error) {
+            setReservedLessonsError(error instanceof Error ? error.message : 'Could not load reserved lessons.')
+        } finally {
+            setIsLoadingReservedSlots(false)
+        }
+    }
+
     useEffect(() => {
         void loadLessons()
+        void loadReservedLessons()
     }, [])
 
     return (
@@ -56,6 +102,39 @@ function TutorLessonsPage() {
                         subtitle='View and manage your lessons.'
                         subsubtitle='Accept or reject reserved slots. Manage upcoming lessons.' 
                     />
+                    <div className="mb-4 mt-8 flex items-center justify-between gap-4">
+                        <h2 className="m-0 text-xl font-bold text-[var(--color-text-primary)]">Reserved lessons</h2>
+                    </div>
+                    {acceptError && (
+                        <div className="mb-4 rounded-xl border border-rose-200 bg-white px-4 py-3 text-sm text-[var(--color-danger)]" role="alert">
+                            {acceptError}
+                        </div>
+                    )}
+                    {isLoadingReservedSlots ? (
+                        <div className="rounded-2xl border border-[var(--color-border)] bg-white px-6 py-12 text-center" role="status">
+                            <p className="m-0 text-sm text-[var(--color-text-secondary)]">Loading reserved slots...</p>
+                        </div>
+                    ) : reservedLessonsError ? (
+                        <div className="rounded-2xl border border-red-200 bg-white px-6 py-12 text-center" role="alert">
+                            <h2 className="m-0 text-lg font-bold text-[var(--color-text-primary)]">Unable to load reserved slots.</h2>
+                            <p className="mb-0 mt-2 text-sm text-[var(--color-danger)]">{reservedLessonsError}</p>
+                        </div>
+                    ) : reservedLessons.length > 0 ? (
+                        <LessonList 
+                            lessons={reservedLessons}
+                            type="RESERVED"
+                            onAccept={handleAcceptReservedLesson}
+                            onReject={handleRejectReservedLesson}
+                            acceptingLessonId={acceptingLessonId}
+                            rejectingLessonId={rejectingLessonId}
+                        />
+                    ) : (
+                        <EmptyState
+                            title="No reserved lessons"
+                            subtitle="Once a student books your slot it will appear here."
+                        />
+                    )}
+
 
                     <div className="mb-4 mt-8 flex items-center justify-between gap-4">
                         <h2 className="m-0 text-xl font-bold text-[var(--color-text-primary)]">Upcoming lessons</h2>
@@ -70,9 +149,15 @@ function TutorLessonsPage() {
                             <p className="mb-0 mt-2 text-sm text-[var(--color-danger)]">{lessonsError}</p>
                         </div>
                     ) :  lessons.length > 0 ? (
-                        <LessonList lessons={lessons} />
+                        <LessonList 
+                            lessons={lessons}
+                            type="UPCOMING"
+                        />
                     ) : (
-                        <EmptySlotsState />
+                        <EmptyState
+                            title="No upcoming lessons"
+                            subtitle="Your confirmed lessons will appear here."
+                        />
                     )}
                 </div>
             </section>

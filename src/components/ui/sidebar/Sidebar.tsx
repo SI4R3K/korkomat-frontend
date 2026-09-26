@@ -37,7 +37,7 @@ function Sidebar({ profileType, expanded, setExpanded, onLogout, isLoggingOut }:
         ? [
             { icon: <HomeIcon />, text: 'Overview', to: `/${role}/dashboard`, expanded },
             { icon: <MagnifyingGlassIcon />, text: 'Schedule lessons', to: `/${role}/available-slots`, expanded, active: false },
-            { icon: <BookOpenIcon />, text: 'My lessons', to: `/${role}/dashboard`, expanded, active: false },
+            { icon: <BookOpenIcon />, text: 'My lessons', to: `/${role}/my-lessons`, expanded, active: false },
             { icon: <ChatBubbleLeftRightIcon />, text: 'Messages', to: `/${role}/dashboard`, expanded, active: false },
             { icon: <UserCircleIcon />, text: 'My profile', to: '/select-profile', expanded, active: false },
         ]

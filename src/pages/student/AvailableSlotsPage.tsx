@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { studentGetSlots } from '../../api/slotApi'
@@ -8,7 +8,7 @@ import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import mapApiSlot  from '../../util/ApiSlotMapper'
 
 import type { AvailableSlot } from '../../types/availableSlot'
-import EmptySlotsState from '../../components/ui/slot/EmptySlotsState'
+import EmptyState from '../../components/ui/EmptyState'
 import SlotFilters from '../../components/ui/slot/SlotFilters'
 import SlotList from '../../components/ui/slot/SlotList'
 import ReservationModal from '../../components/ui/reservation/ReservationModal'
@@ -33,21 +33,24 @@ function AvailableSlotPage( { profileType }: AvailableSlotPageProps) {
     const [slotsError, setSlotsError] = useState('')
     const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null)
 
-    useEffect(() => {
-        const loadSlots = async () => {
-            try {
-                setSlotsError('')
-                const response = await studentGetSlots()
-                setAvailableSlots(response.allAvailableSlots.map(mapApiSlot))
-            } catch (error) {
-                setSlotsError(error instanceof Error ? error.message : 'Could not load available slots.')
-            } finally {
-                setIsLoadingSlots(false)
-            }
+    const loadSlots = useCallback(async (showLoading = true) => {
+        if (showLoading) {
+            setIsLoadingSlots(true)
         }
-
-        void loadSlots()
+        try {
+            setSlotsError('')
+            const response = await studentGetSlots()
+            setAvailableSlots(response.allAvailableSlots.map(mapApiSlot))
+        } catch (error) {
+            setSlotsError(error instanceof Error ? error.message : 'Could not load available slots.')
+        } finally {
+            setIsLoadingSlots(false)
+        }
     }, [])
+
+    useEffect(() => {
+        void loadSlots(false)
+    }, [loadSlots])
 
     const handleLogout = async () => {
         setIsLoggingOut(true)
@@ -126,11 +129,20 @@ function AvailableSlotPage( { profileType }: AvailableSlotPageProps) {
                     ) : filteredSlots.length > 0 ? (
                         <SlotList slots={filteredSlots} onBookSlot={setSelectedSlot} />
                     ) : (
-                        <EmptySlotsState />
+                        <EmptyState
+                            title="No lessons match these filters"
+                            subtitle="Try another subject, date, or search term."
+                        />
                     )}
                 </div>
             </section>
-            {selectedSlot && <ReservationModal slot={selectedSlot} onClose={() => setSelectedSlot(null)} />}
+            {selectedSlot && (
+                <ReservationModal
+                    slot={selectedSlot}
+                    onClose={() => setSelectedSlot(null)}
+                    onBooked={loadSlots}
+                />
+            )}
         </main>
     )
 }

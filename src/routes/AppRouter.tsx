@@ -11,6 +11,7 @@ import AvailableSlotPage from '../pages/student/AvailableSlotsPage'
 import AvailabilityPage from '../pages/tutor/AvailabilityPage'
 import MySubjectsPage from '../pages/tutor/MySubjectsPage'
 import TutorLessonsPage from '../pages/tutor/TutorLessonsPage'
+import StudentLessonsPage from '../pages/student/StudentLessonsPage'
 
 function AppRouter() {
     return (
@@ -99,6 +100,13 @@ function AppRouter() {
             <Route path="/tutor/my-lessons" element={
                 <ProtectedRoute>
                     <TutorLessonsPage/>      
+                </ProtectedRoute>
+            }
+            />
+
+            <Route path="/student/my-lessons" element={
+                <ProtectedRoute>
+                    <StudentLessonsPage/>
                 </ProtectedRoute>
             }
             />

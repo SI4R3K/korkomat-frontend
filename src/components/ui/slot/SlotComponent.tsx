@@ -8,18 +8,20 @@ import type { AvailableSlot } from "../../../types/availableSlot"
 
 type SlotComponentsProps = {
     slot: AvailableSlot,
+    slotLabel?: string,
     showBookingScreen?: () => void
 }
 
 function SlotComponent({
     slot,
+    slotLabel,
     showBookingScreen,
 }: SlotComponentsProps) {
     return (
         <article className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/5%)] transition hover:-translate-y-0.5 hover:border-[var(--color-primary)] hover:shadow-[0_12px_28px_rgb(25_43_58/10%)]">
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <p className="m-0 text-sm font-bold uppercase tracking-[0.06em] text-[var(--color-primary)]">{slot.subject}</p>
+                    <p className="m-0 text-sm font-bold uppercase tracking-[0.06em] text-[var(--color-primary)]">{slotLabel ?? slot.subject}</p>
                     <h3 className="mb-0 mt-2 text-xl font-bold text-[var(--color-text-primary)]">
                         {slot.tutor === 'Unknown tutor' ? '' : slot.tutor}
                     </h3>

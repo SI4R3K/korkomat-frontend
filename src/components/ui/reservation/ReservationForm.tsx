@@ -5,15 +5,17 @@ import { studentBookLesson } from "../../../api/lessonApi"
 import type { AvailableSlot } from "../../../types/availableSlot"
 import type { TutorSubjectPayload } from "../../../types/subject"
 
-interface ReservationFromProps {
+interface ReservationFormProps {
     slot: AvailableSlot
     onClose: () => void
+    onBooked: () => Promise<void>
 }
 
 function ReservationForm({
     slot,
     onClose,
-}: ReservationFromProps) {
+    onBooked,
+}: ReservationFormProps) {
     const [isOpen, setIsOpen] = useState(false)
     const [selectedSubject, setSelectedSubject] = useState<TutorSubjectPayload | null>(null)
     const [place, setPlace] = useState('')
@@ -51,6 +53,7 @@ function ReservationForm({
                 tutorSubjectId: selectedSubject.subjectId,
                 place: place.trim() || undefined,
             })
+            await onBooked()
             onClose()
         } catch (error) {
             setBookingError(error instanceof Error ? error.message : 'Could not book the lesson.')

@@ -3,7 +3,7 @@ import { useEffect, useState, type SubmitEvent } from "react"
 
 
 import type { AvailableSlot, CreateAvailableSlotRequest } from '../../types/availableSlot'
-import EmptySlotsState from '../../components/ui/slot/EmptySlotsState'
+import EmptyState from '../../components/ui/EmptyState'
 import SlotList from '../../components/ui/slot/SlotList'
 import { useAuth } from "../../context/AuthContext"
 
@@ -132,9 +132,12 @@ function AvailabilityPage() {
                                 <p className="mb-0 mt-2 text-sm text-[var(--color-danger)]">{slotsError}</p>
                             </div>
                         ) : availableSlots.length > 0 ? (
-                            <SlotList slots={availableSlots} />
+                            <SlotList slots={availableSlots} slotLabel="Slot" />
                         ) : (
-                            <EmptySlotsState />
+                            <EmptyState
+                                title="No availability yet"
+                                subtitle="Add a time slot so students can book a lesson with you."
+                            />
                         )}
                 </div>
             </section>
