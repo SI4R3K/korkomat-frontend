@@ -4,13 +4,13 @@ import { useEffect, useState, type SubmitEvent } from "react"
 
 import type { AvailableSlot, CreateAvailableSlotRequest } from '../../types/availableSlot'
 import EmptyState from '../../components/ui/EmptyState'
-import SlotList from '../../components/ui/slot/SlotList'
 import { useAuth } from "../../context/AuthContext"
 
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import mapApiSlot from "../../util/ApiSlotMapper"
-import { tutorCreateSlot, tutorGetSlots } from "../../api/slotApi"
+import { tutorCreateSlot, tutorDeleteSlot, tutorGetSlots } from "../../api/slotApi"
 import HeaderComponent from '../../components/ui/header/HeaderComponent'
+import TutorSlotList from "../../components/ui/slot/TutorSlotList"
 
 function AvailabilityPage() {
     const { logout } = useAuth()
@@ -23,6 +23,7 @@ function AvailabilityPage() {
     const [isCreatingSlot, setIsCreatingSlot] = useState(false)
     const [createSlotError, setCreateSlotError] = useState('')
     const [createSlotSuccess, setCreateSlotSuccess] = useState('')
+    const [deletingSlotId, setDeletingSlotId] = useState<number | null>(null)
     const [newSlot, setNewSlot] = useState<CreateAvailableSlotRequest>({
         startTime: '',
         endTime: '',
@@ -80,6 +81,20 @@ function AvailabilityPage() {
         navigate('/login', {replace: true})
     }
 
+    const handleDeleteSlot = async (slotId: number) => {
+        try {
+            setDeletingSlotId(slotId)
+            setSlotsError('')
+            await tutorDeleteSlot(slotId)
+            await Promise.all([loadSlots()])
+        } catch(error) {
+            setSlotsError(error instanceof Error ? error.message : 'Could not delete the slot.')
+        } finally {
+            setDeletingSlotId(null)
+        }
+        
+    }
+
     return (
         <main className="min-h-screen bg-[var(--color-background)]">
             <MakeSidebar profileType="Tutor" expanded={sidebarExpanded} setExpanded={setSidebarExpanded} onLogout={handleLogout} isLoggingOut={isLoggingOut}/>
@@ -104,7 +119,7 @@ function AvailabilityPage() {
                                 <input id="slot-end-time" required type="datetime-local" value={newSlot.endTime} onChange={(event) => setNewSlot({ ...newSlot, endTime: event.target.value })} className="rounded-xl border border-[var(--color-border)] bg-white px-3 py-3 font-normal outline-none focus:border-[var(--color-border-focus)] focus:ring-4 focus:ring-[var(--color-primary-soft)]" />
                             </label>
                             <label className="flex flex-col gap-2 text-sm font-bold text-[var(--color-text-primary)]" htmlFor="slot-type">
-                                Lesson type
+                                Lesson format
                                 <select id="slot-type" value={newSlot.type} onChange={(event) => setNewSlot({ ...newSlot, type: event.target.value as CreateAvailableSlotRequest['type'] })} className="rounded-xl border border-[var(--color-border)] bg-white px-3 py-3 font-normal outline-none focus:border-[var(--color-border-focus)] focus:ring-4 focus:ring-[var(--color-primary-soft)]">
                                     <option value="ONLINE">Online</option>
                                     <option value="IN_PERSON">In person</option>
@@ -132,7 +147,12 @@ function AvailabilityPage() {
                                 <p className="mb-0 mt-2 text-sm text-[var(--color-danger)]">{slotsError}</p>
                             </div>
                         ) : availableSlots.length > 0 ? (
-                            <SlotList slots={availableSlots} slotLabel="Slot" />
+                            <TutorSlotList 
+                                slots={availableSlots} 
+                                slotLabel="Slot"
+                                onDelete={handleDeleteSlot}
+                                deletingSlotId={deletingSlotId} 
+                            />
                         ) : (
                             <EmptyState
                                 title="No availability yet"

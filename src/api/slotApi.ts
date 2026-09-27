@@ -56,3 +56,22 @@ export async function tutorCreateSlot(slot: CreateAvailableSlotRequest): Promise
         throw new Error(message || 'Creating available slot failed')
     }
 }
+
+export async function tutorDeleteSlot(slotId: number) {
+    const endpoint = `/tutor/available-slot/${slotId}`
+
+    const response = await apiClient(endpoint, {
+        method: 'DELETE'
+    })
+
+    if (!response.ok) {
+        const message = await response.text()
+        throw new Error(message || 'Deleting slot failed')
+    }
+    // such DTO is in response
+    // public final data class DeleteAvailableSlotsResponse(
+    //  public final val message: String,
+    //  public final val deletedAvailableSlot: AvailableSlotResponse
+    // )
+    // for now use of it is not neede therefore we dont use it
+}
