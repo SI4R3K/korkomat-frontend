@@ -3,14 +3,10 @@ import { useNavigate } from "react-router-dom"
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import { useAuth } from "../../context/AuthContext"
 import { type Subject, type SubjectLevel, type TutorSubject } from "../../types/subject"
-import { tutorGetMyTutorSubjects, tutorGetSubjects, tutorAddMyTutorSubject } from "../../api/subjectApi"
-import TutorSubjectComponent from "../../components/ui/subject/SubjectComponent"
+import { tutorGetMyTutorSubjects, tutorGetSubjects, tutorAddMyTutorSubject, tutorDeleteMyTutorSubject } from "../../api/subjectApi"
 import SubjectForm from "../../components/ui/subject/SubjectForm"
 import HeaderComponent from '../../components/ui/header/HeaderComponent'
-
-type LocalTutorSubject = TutorSubject & {
-    subjectName: string
-}
+import SubjectList from "../../components/ui/subject/SubjectList"
 
 function MySubjectsPage() {
     const { logout } = useAuth()
@@ -20,11 +16,13 @@ function MySubjectsPage() {
     const [subjects, setSubjects] = useState<Subject[]>([])
     const [subjectsError, setSubjectsError] = useState('')
     const [isLoadingSubjects, setIsLoadingSubjects] = useState(true)
-    const [tutorSubjects, setTutorSubjects] = useState<LocalTutorSubject[]>([])
+    const [tutorSubjects, setTutorSubjects] = useState<TutorSubject[]>([])
     const [selectedSubjectId, setSelectedSubjectId] = useState('')
     const [selectedLevel, setSelectedLevel] = useState<SubjectLevel | ''>('')
     const [description, setDescription] = useState('')
     const [createSubjectError, setCreateSubjectError] = useState('')
+    const [deletingTutorSubjectId, setDeletingTutorSubjectId] = useState<string | null>(null)
+    const [deleteTutorSubjectError, setDeleteTutorSubjectError] = useState('')
 
     const handleLogout = async () => {
         setIsLoggingOut(true)
@@ -40,20 +38,13 @@ function MySubjectsPage() {
                 tutorGetMyTutorSubjects(),
             ])
             setSubjects(availableSubjects)
-            setTutorSubjects(currentTutorSubjects.map((tutorSubject) => ({
-                ...tutorSubject,
-                subjectName: tutorSubject.subjectName,
-            })))
+            setTutorSubjects(currentTutorSubjects)
         } catch(error) {
             setSubjectsError(error instanceof Error ? error.message : 'Could not load subjects.')
         } finally {
             setIsLoadingSubjects(false)
         }
     }
-
-    useEffect(() => {
-        void loadSubjects()
-    }, [])
 
     const handleAddSubject = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -84,17 +75,7 @@ function MySubjectsPage() {
                 description,
                 level: selectedLevel,
             })
-
-            setTutorSubjects((currentSubjects) => [
-                ...currentSubjects,
-                {
-                    id: Date.now(),
-                    name: selectedSubject.name,
-                    subjectName: selectedSubject.name,
-                    level: selectedLevel,
-                    description: description.trim(),
-                },
-            ])
+            await loadSubjects()
             setSelectedSubjectId('')
             setSelectedLevel('')
             setDescription('')
@@ -113,6 +94,23 @@ function MySubjectsPage() {
                 : errorMessage || 'Could not create the subject.')
         }
     }
+
+    const handleDeleteTutorSubject = async (tutorSubjectId: string) => {
+        try {
+            setDeleteTutorSubjectError('')
+            setDeletingTutorSubjectId(tutorSubjectId)
+            await tutorDeleteMyTutorSubject(tutorSubjectId)
+            await Promise.all([loadSubjects()])
+        } catch(error) {
+            setDeleteTutorSubjectError(error instanceof Error ? error.message : 'Could not delete selected tutors subject')
+        } finally {
+            setDeletingTutorSubjectId(null)
+        }
+    }
+
+    useEffect(() => {
+        void loadSubjects()
+    }, [])
 
     return (
         <main className="min-h-screen bg-[var(--color-background)]">
@@ -142,6 +140,7 @@ function MySubjectsPage() {
                         <h2 className="m-0 text-xl font-bold text-[var(--color-text-primary)]">Your subjects</h2>
                         <span className="text-sm text-[var(--color-text-secondary)]">{tutorSubjects.length} {tutorSubjects.length === 1 ? 'subject' : 'subjects'}</span>
                     </div>
+                    {deleteTutorSubjectError && <p className="mb-4 text-sm text-[var(--color-danger)]" role="alert">{deleteTutorSubjectError}</p>}
                     {isLoadingSubjects ? (
                         <div className="rounded-2xl border border-[var(--color-border)] bg-white px-6 py-12 text-center" role="status"><p className="m-0 text-sm text-[var(--color-text-secondary)]">Loading subjects...</p></div>
                     ) : subjectsError ? (
@@ -149,7 +148,11 @@ function MySubjectsPage() {
                     ) : tutorSubjects.length === 0 ? (
                         <div className="rounded-2xl border border-dashed border-[var(--color-border)] bg-white px-6 py-12 text-center"><p className="m-0 text-sm text-[var(--color-text-secondary)]">No subjects added yet.</p></div>
                     ) : (
-                        <TutorSubjectComponent tutorSubjects={tutorSubjects} />
+                        <SubjectList 
+                            tutorSubjects={tutorSubjects}
+                            deletingSubjectId={deletingTutorSubjectId}
+                            onDelete={handleDeleteTutorSubject} 
+                        />
                     )}
                 </div>
             </section>

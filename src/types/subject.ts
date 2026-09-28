@@ -5,11 +5,11 @@ export type SubjectLevel =
     'MATURA_EXAM' |
     'UNIVERSITY'
 
-export type TutorSubject = {
-    id: number,
-    subjectName: string,
-    level: SubjectLevel | null,
-    description: string
+// types for getting subjects
+export type ApiSubjectResponse = {
+    data: {
+        subjects: Subject[]
+    }
 }
 
 export type Subject = {
@@ -26,27 +26,41 @@ export type SubjectResponse = {
     name: string
 }
 
+// creating tutor subjects
 export type CreateTutorSubjectRequest = {
     subjectId: string,
     description: string,
     level: SubjectLevel
 }
 
-export type ApiSubjectResponse = {
-    data: {
-        subjects: Subject[]
-    }
-}
-
+// tutor getting subjects
 export type TutorSubjectResponse = {
     data: {
-        tutorSubjects: TutorSubjectPayload[]
+        tutorSubjects: TutorSubject[]
     }
 }
 
-export type TutorSubjectPayload = {
+export type TutorSubject = {
+    id: string
+    // tutorId: string,
+    // tutorEmail: string,
+    // tutorFullName: string,
+    subjectId: number,
+    subjectName: string
+    level: SubjectLevel
+    description?: string
+}
+
+// student getting tutor subjects
+export type StudentTutorSubjectResponse = {
+    data: {
+        tutorSubjects: StudentTutorSubject[]
+    }
+}
+
+export type StudentTutorSubject = {
     subjectId: number
     subjectName: string
-    level?: SubjectLevel
+    level: SubjectLevel
     description: string
 }

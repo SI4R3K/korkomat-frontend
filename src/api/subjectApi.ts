@@ -1,12 +1,13 @@
 import { apiClient } from "./client";
 
 import type { 
-    Subject,  
-    TutorSubject, 
-    TutorSubjectPayload,
+    Subject, 
+    TutorSubject,
     CreateTutorSubjectRequest,
     ApiSubjectResponse,
     TutorSubjectResponse,
+    StudentTutorSubjectResponse,
+    StudentTutorSubject,
 } from "../types/subject";
 
 
@@ -41,14 +42,7 @@ export async function tutorGetMyTutorSubjects(): Promise<TutorSubject[]> {
 
     const payload: TutorSubjectResponse = await response.json()
     
-    return payload.data.tutorSubjects.map((tutorSubject) => {
-        return {
-            id: tutorSubject.subjectId,
-            subjectName: tutorSubject.subjectName,
-            level: tutorSubject.level ?? null,
-            description: tutorSubject.description,
-        }
-    })
+    return payload.data.tutorSubjects
 }
 
 export async function tutorAddMyTutorSubject(tutorSubject: CreateTutorSubjectRequest): Promise<void> {
@@ -65,7 +59,38 @@ export async function tutorAddMyTutorSubject(tutorSubject: CreateTutorSubjectReq
     }
 }
 
-export async function studentGetTutorsSubjects(tutorId: string): Promise<TutorSubjectPayload[]> {
+export async function tutorDeleteMyTutorSubject(tutorSubjectId: string) {
+    const endpoint = `/tutor/subjects/${tutorSubjectId}`
+
+    const response = await apiClient(endpoint, {
+        method: 'DELETE',
+    })
+
+    if (!response.ok) {
+        const message = await response.text()
+        let backendMessage = ''
+        try {
+            const payload = JSON.parse(message) as { message?: string }
+            backendMessage = payload.message ?? ''
+        } catch {}
+
+        if (
+            backendMessage.includes('violates foreign key constraint') &&
+            backendMessage.includes('on table "lessons"')
+        ) {
+            throw new Error('This subject cannot be deleted because it is linked to a lesson, including reserved or upcoming lessons.')
+        }
+
+        throw new Error(message || 'Deleting tutor subject failed')
+    }
+
+    // In case it is neede such response dto is returned from the backend
+    // data class DeleteTutorSubjectResponse(
+    //     val message: String,
+    // )
+}
+
+export async function studentGetTutorsSubjects(tutorId: string): Promise<StudentTutorSubject[]> {
     const endpoint = `/student/subjects/${tutorId}`
 
     const response = await apiClient(endpoint, {
@@ -77,7 +102,7 @@ export async function studentGetTutorsSubjects(tutorId: string): Promise<TutorSu
         throw new Error(message || 'Getting tutor subjects failed')
     }
 
-    const payload: TutorSubjectResponse = await response.json()
+    const payload: StudentTutorSubjectResponse = await response.json()
 
     return payload.data.tutorSubjects
 }

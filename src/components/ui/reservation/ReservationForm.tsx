@@ -3,7 +3,7 @@ import { BookOpenIcon, CheckIcon, ChevronDownIcon } from '@heroicons/react/24/ou
 import { studentGetTutorsSubjects } from "../../../api/subjectApi"
 import { studentBookLesson } from "../../../api/lessonApi"
 import type { AvailableSlot } from "../../../types/availableSlot"
-import type { TutorSubjectPayload } from "../../../types/subject"
+import type { StudentTutorSubject } from "../../../types/subject"
 
 interface ReservationFormProps {
     slot: AvailableSlot
@@ -17,19 +17,19 @@ function ReservationForm({
     onBooked,
 }: ReservationFormProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedSubject, setSelectedSubject] = useState<TutorSubjectPayload | null>(null)
+    const [selectedSubject, setSelectedSubject] = useState<StudentTutorSubject | null>(null)
     const [place, setPlace] = useState('')
     const [bookingError, setBookingError] = useState('')
     const [isBooking, setIsBooking] = useState(false)
     const [tutorsSubjectsError, setTutorsSubjectsError] = useState('')
-    const [loadedTutorSubjects, setLoadedTutorSubjects] = useState<TutorSubjectPayload[] | null>(null)
+    const [loadedTutorSubjects, setLoadedTutorSubjects] = useState<StudentTutorSubject[] | null>(null)
     const [isLoadingTutorsSubjects, setIsLoadingTutorsSubjects] = useState(true)
 
     const toggleMenu = () => {
         setIsOpen((currentValue) => !currentValue)
     }
 
-    const selectSubject = (subject: TutorSubjectPayload) => {
+    const selectSubject = (subject: StudentTutorSubject) => {
         setSelectedSubject(subject)
         setIsOpen(false)
     }
