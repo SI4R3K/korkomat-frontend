@@ -1,6 +1,10 @@
 import { apiClient } from './client'
 
-import type { AvailableSlotsResponse, CreateAvailableSlotRequest } from '../types/availableSlot'
+import type { 
+    AvailableSlotsResponse,
+    CreateAvailableSlotRequest, 
+    UpdateAvailableSlotRequest 
+} from '../types/availableSlot'
 
 function normalizeAvailableSlots(payload: unknown): AvailableSlotsResponse {
     const data = (payload as { data?: { allAvailableSlots?: unknown; availableSlots?: unknown } } | undefined)?.data ?? payload
@@ -74,4 +78,18 @@ export async function tutorDeleteSlot(slotId: number) {
     //  public final val deletedAvailableSlot: AvailableSlotResponse
     // )
     // for now use of it is not neede therefore we dont use it
+}
+
+export async function tutorUpdateSlot(slotId: number, slot: UpdateAvailableSlotRequest): Promise<void> {
+    const endpoint = `/tutor/available-slot/${slotId}`
+
+    const response = await apiClient(endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(slot),
+    })
+
+    if (!response.ok) {
+        const message = await response.text()
+        throw new Error(message || 'Updating available slot failed')
+    }
 }

@@ -7,6 +7,7 @@ import EmptyState from "../../components/ui/EmptyState"
 import { tutorAcceptReservation, tutorGetLessons, tutorRejectReservation } from "../../api/lessonApi"
 import type { TutorLesson } from "../../types/lesson"
 import LessonList from "../../components/ui/lesson/LessonList"
+import RejectModal from "../../components/ui/reject/RejectModal"
 
 function TutorLessonsPage() {
     const { logout } = useAuth()
@@ -21,8 +22,11 @@ function TutorLessonsPage() {
     const [reservedLessons, setReservedLessons] = useState<TutorLesson[]>([])
     const [acceptingLessonId, setAcceptingLessonId] = useState<number | null>(null)
     const [acceptError, setAcceptError] = useState('')
-    const [rejectingLessonId, setRejectingLessonId] = useState<number | null>(null)
     const [rejectError, setRejectError] = useState('')
+    const [rejectPopup, setRejectPopup] = useState({
+        show: false,
+        lessonId: null as number | null
+    })
 
     const handleLogout = async () => {
         setIsLoggingOut(true)
@@ -42,18 +46,37 @@ function TutorLessonsPage() {
             setAcceptingLessonId(null)
         }
     }
+
+    const handleRejectReservedLesson = (lessonId: number) => {
+        setRejectPopup({
+            show: true,
+            lessonId: lessonId
+        })
+    }
     
-    const handleRejectReservedLesson = async (lessonId: number) => {
+    const handleRejectReservedLessonTrue = async () => {
         try {
-            setRejectingLessonId(lessonId)
-            setRejectError('')
-            await tutorRejectReservation(lessonId)
-            await Promise.all([loadLessons(), loadReservedLessons()])
+            if (rejectPopup.show && rejectPopup.lessonId) {
+                setRejectError('')
+
+                await tutorRejectReservation(rejectPopup.lessonId)
+                await Promise.all([loadLessons(), loadReservedLessons()])
+            }      
         } catch(error) {
             setRejectError(error instanceof Error ? error.message : 'Could not reject reserved lesson.')
         } finally {
-            setRejectingLessonId(null)
+            setRejectPopup({
+                show: false,
+                lessonId: null
+            })
         }
+    }
+
+    const handleRejectReservedLessonFalse = () => {
+        setRejectPopup({
+            show: false,
+            lessonId: null
+        })
     }
 
     const loadLessons = async () => {
@@ -126,12 +149,19 @@ function TutorLessonsPage() {
                             onAccept={handleAcceptReservedLesson}
                             onReject={handleRejectReservedLesson}
                             acceptingLessonId={acceptingLessonId}
-                            rejectingLessonId={rejectingLessonId}
+                            rejectingLessonId={rejectPopup.lessonId}
                         />
                     ) : (
                         <EmptyState
                             title="No reserved lessons"
                             subtitle="Once a student books your slot it will appear here."
+                        />
+                    )}
+                    {rejectPopup.show && rejectPopup.lessonId !== null && (
+                        <RejectModal
+                            typeName="lesson"
+                            onReject={handleRejectReservedLessonTrue}
+                            onClose={handleRejectReservedLessonFalse}
                         />
                     )}
 

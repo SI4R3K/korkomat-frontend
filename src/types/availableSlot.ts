@@ -10,6 +10,8 @@ export type AvailableSlot = {
     date: string
     dateLabel?: string
     time: string
+    startTime: string,
+    endTime: string,
     format: 'Online' | 'In person' | 'Any'
     location: string
 }
@@ -33,4 +35,11 @@ export type CreateAvailableSlotRequest = {
     startTime: string
     endTime: string
     type: AvailableSlotApiItem['type']
+}
+
+export type UpdateAvailableSlotRequest = {
+    // slotId: number
+    startTime?: string
+    endTime?: string
+    type?: 'ONLINE' | 'IN_PERSON' | 'OPTIONAL'
 }

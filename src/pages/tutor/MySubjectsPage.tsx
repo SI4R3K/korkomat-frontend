@@ -7,6 +7,7 @@ import { tutorGetMyTutorSubjects, tutorGetSubjects, tutorAddMyTutorSubject, tuto
 import SubjectForm from "../../components/ui/subject/SubjectForm"
 import HeaderComponent from '../../components/ui/header/HeaderComponent'
 import SubjectList from "../../components/ui/subject/SubjectList"
+import DeleteModal from "../../components/ui/delete/DeleteModal"
 
 function MySubjectsPage() {
     const { logout } = useAuth()
@@ -21,8 +22,11 @@ function MySubjectsPage() {
     const [selectedLevel, setSelectedLevel] = useState<SubjectLevel | ''>('')
     const [description, setDescription] = useState('')
     const [createSubjectError, setCreateSubjectError] = useState('')
-    const [deletingTutorSubjectId, setDeletingTutorSubjectId] = useState<string | null>(null)
     const [deleteTutorSubjectError, setDeleteTutorSubjectError] = useState('')
+    const [deletePopup, setDeletePopup] = useState({
+        show: false,
+        tutorSubjectId: null as string | null
+    })
 
     const handleLogout = async () => {
         setIsLoggingOut(true)
@@ -95,16 +99,28 @@ function MySubjectsPage() {
         }
     }
 
-    const handleDeleteTutorSubject = async (tutorSubjectId: string) => {
+    const handleDeleteTutorSubject = (tutorSubjectId: string) => {
+        setDeletePopup({
+            show: true,
+            tutorSubjectId
+        })
+    }
+
+    const handleDeleteTutorSubjectTrue = async () => {
         try {
-            setDeleteTutorSubjectError('')
-            setDeletingTutorSubjectId(tutorSubjectId)
-            await tutorDeleteMyTutorSubject(tutorSubjectId)
-            await Promise.all([loadSubjects()])
+            if (deletePopup.show && deletePopup.tutorSubjectId) {
+                setDeleteTutorSubjectError('')
+
+                await tutorDeleteMyTutorSubject(deletePopup.tutorSubjectId)
+                await Promise.all([loadSubjects()])
+            }
         } catch(error) {
             setDeleteTutorSubjectError(error instanceof Error ? error.message : 'Could not delete selected tutors subject')
         } finally {
-            setDeletingTutorSubjectId(null)
+            setDeletePopup({
+                show: false,
+                tutorSubjectId: null
+            })
         }
     }
 
@@ -150,8 +166,15 @@ function MySubjectsPage() {
                     ) : (
                         <SubjectList 
                             tutorSubjects={tutorSubjects}
-                            deletingSubjectId={deletingTutorSubjectId}
+                            deletingSubjectId={deletePopup.tutorSubjectId}
                             onDelete={handleDeleteTutorSubject} 
+                        />
+                    )}
+                    {deletePopup.show && deletePopup.tutorSubjectId && (
+                        <DeleteModal 
+                            typeName="subject"
+                            onDelete={handleDeleteTutorSubjectTrue}
+                            onClose={() => setDeletePopup({ show: false, tutorSubjectId: null })}
                         />
                     )}
                 </div>

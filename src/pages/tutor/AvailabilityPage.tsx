@@ -2,15 +2,26 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState, type SubmitEvent } from "react"
 
 
-import type { AvailableSlot, CreateAvailableSlotRequest } from '../../types/availableSlot'
+import type { 
+    AvailableSlot, 
+    CreateAvailableSlotRequest,
+    UpdateAvailableSlotRequest
+} from '../../types/availableSlot'
 import EmptyState from '../../components/ui/EmptyState'
 import { useAuth } from "../../context/AuthContext"
 
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import mapApiSlot from "../../util/ApiSlotMapper"
-import { tutorCreateSlot, tutorDeleteSlot, tutorGetSlots } from "../../api/slotApi"
+import { 
+    tutorCreateSlot, 
+    tutorDeleteSlot, 
+    tutorGetSlots,
+    tutorUpdateSlot
+} from "../../api/slotApi"
 import HeaderComponent from '../../components/ui/header/HeaderComponent'
 import TutorSlotList from "../../components/ui/slot/TutorSlotList"
+import DeleteModal from "../../components/ui/delete/DeleteModal"
+import EditSlotModal from "../../components/ui/edit/EditSlotModal"
 
 function AvailabilityPage() {
     const { logout } = useAuth()
@@ -23,7 +34,14 @@ function AvailabilityPage() {
     const [isCreatingSlot, setIsCreatingSlot] = useState(false)
     const [createSlotError, setCreateSlotError] = useState('')
     const [createSlotSuccess, setCreateSlotSuccess] = useState('')
-    const [deletingSlotId, setDeletingSlotId] = useState<number | null>(null)
+    const [deletePopup, setDeletePopup] = useState({
+        show: false,
+        slotId: null as number | null,
+    })
+    const [editPopup, setEditPopup] = useState({
+        show: false,
+        slotToEdit: null as AvailableSlot | null,
+    })
     const [newSlot, setNewSlot] = useState<CreateAvailableSlotRequest>({
         startTime: '',
         endTime: '',
@@ -81,18 +99,79 @@ function AvailabilityPage() {
         navigate('/login', {replace: true})
     }
 
-    const handleDeleteSlot = async (slotId: number) => {
+    const handleDeleteSlot = (slotId: number) => {
+        setDeletePopup({ 
+            show: true, 
+            slotId 
+        })
+    }
+
+    const handleDeleteSlotTrue = async () => {
         try {
-            setDeletingSlotId(slotId)
-            setSlotsError('')
-            await tutorDeleteSlot(slotId)
-            await Promise.all([loadSlots()])
+            if (deletePopup.show && deletePopup.slotId) {
+                setSlotsError('')
+
+                await tutorDeleteSlot(deletePopup.slotId)
+                await Promise.all([loadSlots()])
+            }
         } catch(error) {
             setSlotsError(error instanceof Error ? error.message : 'Could not delete the slot.')
         } finally {
-            setDeletingSlotId(null)
+            setDeletePopup({ 
+                show: false, 
+                slotId: null 
+            })
         }
-        
+    }
+    
+    const handleDeleteSlotFalse = () => {
+        setDeletePopup({ 
+            show: false, 
+            slotId: null 
+        })
+    }
+
+    const handleEditSlot = (slot: AvailableSlot) => {
+        setEditPopup({ 
+            show: true, 
+            slotToEdit: slot 
+        })
+    }
+
+    const handleEditSlotTrue = async (updatedSlot: UpdateAvailableSlotRequest) => {
+        const selectedSlot = editPopup.slotToEdit
+        if (!selectedSlot) return
+
+        const { startTime, endTime, type} = updatedSlot
+        if (!startTime || !endTime || !type) return
+        console.log(startTime, endTime, type)
+        try {
+            setSlotsError('')
+
+            const toApiInstant = (value: string) => 
+                new Date(value).toISOString()
+
+            await tutorUpdateSlot(selectedSlot.id, {
+                startTime: toApiInstant(startTime),
+                endTime: toApiInstant(endTime),
+                type,
+            })
+            await loadSlots()
+        } catch(error) {
+            setSlotsError(error instanceof Error ? error.message : 'Could not update the slot.')
+        } finally {
+            setEditPopup({ 
+                show: false, 
+                slotToEdit: null 
+            })
+        }
+    }
+
+    const handleEditSlotFalse = () => {
+        setEditPopup({ 
+            show: false, 
+            slotToEdit: null 
+        })
     }
 
     return (
@@ -151,7 +230,9 @@ function AvailabilityPage() {
                                 slots={availableSlots} 
                                 slotLabel="Slot"
                                 onDelete={handleDeleteSlot}
-                                deletingSlotId={deletingSlotId} 
+                                deletingSlotId={deletePopup.slotId} 
+                                editingSlotId={editPopup.slotToEdit?.id ?? null}
+                                onEdit={handleEditSlot}
                             />
                         ) : (
                             <EmptyState
@@ -159,6 +240,20 @@ function AvailabilityPage() {
                                 subtitle="Add a time slot so students can book a lesson with you."
                             />
                         )}
+                    {deletePopup.show && deletePopup.slotId !== null && (
+                        <DeleteModal 
+                            typeName="slot"
+                            onDelete={handleDeleteSlotTrue} 
+                            onClose={handleDeleteSlotFalse} 
+                        />
+                    )}
+                    {editPopup.show && editPopup.slotToEdit !== null && (
+                        <EditSlotModal
+                            currentSlot={editPopup.slotToEdit} 
+                            onEdit={handleEditSlotTrue}
+                            onClose={handleEditSlotFalse}
+                        />
+                    )}
                 </div>
             </section>
         </main>

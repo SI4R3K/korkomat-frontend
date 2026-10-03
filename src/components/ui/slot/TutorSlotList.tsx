@@ -5,6 +5,8 @@ type TutorSlotListProps = {
     slots: AvailableSlot[]
     slotLabel?: string
     deletingSlotId: number | null
+    editingSlotId: number | null
+    onEdit: (slot: AvailableSlot) => void
     onDelete: (slotId:number) => void
 }
 
@@ -12,6 +14,8 @@ function TutorSlotList({
     slots, 
     slotLabel,
     deletingSlotId,
+    editingSlotId,
+    onEdit,
     onDelete,
 }: TutorSlotListProps) {
     return (
@@ -22,6 +26,8 @@ function TutorSlotList({
                     slot={slot} 
                     slotLabel={slotLabel}
                     deletingSlotId={deletingSlotId}
+                    editingSlotId={editingSlotId}
+                    onEdit={onEdit}
                     onDelete={onDelete} 
                 />
             ))}

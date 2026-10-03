@@ -9,6 +9,8 @@ type TutorSlotComponentProps = {
     slot: AvailableSlot
     slotLabel?: string
     deletingSlotId: number | null
+    editingSlotId: number | null
+    onEdit: (slot: AvailableSlot) => void
     onDelete: (slotId: number) => void
 }
 
@@ -16,11 +18,15 @@ function TutorSlotComponent({
     slot,
     slotLabel,
     deletingSlotId,
+    editingSlotId,
+    onEdit,
     onDelete
 }: TutorSlotComponentProps) {
     const isDeleting = deletingSlotId === slot.id
+    const isEditing = editingSlotId === slot.id
     const isDeletingDisabled = deletingSlotId != null
-    
+    const isEditingDisabled = editingSlotId != null
+
     return (
         <article className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/5%)] transition hover:-translate-y-0.5 hover:border-[var(--color-primary)] hover:shadow-[0_12px_28px_rgb(25_43_58/10%)]">
             <div className="flex items-start justify-between gap-4">
@@ -48,8 +54,13 @@ function TutorSlotComponent({
                 </span>
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <button type="button" className="rounded-xl border border-[var(--color-border)] px-4 py-3 font-bold text-[var(--color-text-primary)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">
-                    Edit
+                <button 
+                    type="button" 
+                    className="rounded-xl border border-[var(--color-border)] px-4 py-3 font-bold text-[var(--color-text-primary)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                    onClick={() => onEdit(slot)}
+                    disabled={isEditingDisabled}
+                >
+                    {isEditing ? 'Editing...' : 'Edit'}
                 </button>
                 <button 
                     type="button" 
