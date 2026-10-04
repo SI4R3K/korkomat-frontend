@@ -144,7 +144,7 @@ function AvailabilityPage() {
 
         const { startTime, endTime, type} = updatedSlot
         if (!startTime || !endTime || !type) return
-        console.log(startTime, endTime, type)
+        
         try {
             setSlotsError('')
 

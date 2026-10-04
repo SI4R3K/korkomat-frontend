@@ -2,12 +2,19 @@ import { useEffect, useState, type SubmitEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import { useAuth } from "../../context/AuthContext"
-import { type Subject, type SubjectLevel, type TutorSubject } from "../../types/subject"
-import { tutorGetMyTutorSubjects, tutorGetSubjects, tutorAddMyTutorSubject, tutorDeleteMyTutorSubject } from "../../api/subjectApi"
+import { type Subject, type SubjectLevel, type TutorSubject, type UpdateTutorSubjectRequest } from "../../types/subject"
+import { 
+    tutorGetMyTutorSubjects, 
+    tutorGetSubjects, 
+    tutorAddMyTutorSubject, 
+    tutorDeleteMyTutorSubject,
+    tutorUpdateMyTutorSubject
+} from "../../api/subjectApi"
 import SubjectForm from "../../components/ui/subject/SubjectForm"
 import HeaderComponent from '../../components/ui/header/HeaderComponent'
 import SubjectList from "../../components/ui/subject/SubjectList"
 import DeleteModal from "../../components/ui/delete/DeleteModal"
+import EditTutorSubjectModal from "../../components/ui/edit/EditTutorSubjectModal"
 
 function MySubjectsPage() {
     const { logout } = useAuth()
@@ -23,9 +30,14 @@ function MySubjectsPage() {
     const [description, setDescription] = useState('')
     const [createSubjectError, setCreateSubjectError] = useState('')
     const [deleteTutorSubjectError, setDeleteTutorSubjectError] = useState('')
+    const [editTutorSubjectError, setEditTutorSubjectError] = useState('')
     const [deletePopup, setDeletePopup] = useState({
         show: false,
         tutorSubjectId: null as string | null
+    })
+    const [editPopup, setEditPopup] = useState({
+        show: false,
+        tutorSubjectToEdit: null as TutorSubject | null
     })
 
     const handleLogout = async () => {
@@ -124,6 +136,57 @@ function MySubjectsPage() {
         }
     }
 
+    const handleEditTutorSubject = (tutorSubject: TutorSubject) => {
+        setEditTutorSubjectError('')
+        setEditPopup({
+            show: true,
+            tutorSubjectToEdit: tutorSubject
+        })
+    }
+
+    const handleEditTutorSubjectTrue = async (updatedTutorSubject: UpdateTutorSubjectRequest) => {
+        const selectedTutorSubject = editPopup.tutorSubjectToEdit
+        if (!selectedTutorSubject) return
+
+        const { id } = selectedTutorSubject
+        if (!id) return
+
+        try {
+            setEditTutorSubjectError('')
+
+            await tutorUpdateMyTutorSubject(
+                parseInt(id),
+                updatedTutorSubject
+            )
+            await loadSubjects() // Refresh the subjects after editing
+            setEditPopup({
+                show: false,
+                tutorSubjectToEdit: null
+            })
+        } catch(error) {
+            let errorMessage = error instanceof Error ? error.message : ''
+
+            try {
+                const response = JSON.parse(errorMessage) as { message?: string }
+                errorMessage = response.message ?? errorMessage
+            } catch {
+                // Keep the original message when the API response is not JSON.
+            }
+
+            setEditTutorSubjectError(errorMessage === 'Tutor subject already exists'
+                ? 'You already teach this subject at the selected level.'
+                : errorMessage || 'Could not update the selected tutor subject.')
+        }
+    }
+
+    const handleEditTutorSubjectFalse = () => {
+        setEditTutorSubjectError('')
+        setEditPopup({
+            show: false,
+            tutorSubjectToEdit: null
+        })
+    }
+
     useEffect(() => {
         void loadSubjects()
     }, [])
@@ -166,8 +229,10 @@ function MySubjectsPage() {
                     ) : (
                         <SubjectList 
                             tutorSubjects={tutorSubjects}
+                            editingSubjectId={editPopup.tutorSubjectToEdit?.id ?? null}
                             deletingSubjectId={deletePopup.tutorSubjectId}
-                            onDelete={handleDeleteTutorSubject} 
+                            onDelete={handleDeleteTutorSubject}
+                            onEdit={handleEditTutorSubject} 
                         />
                     )}
                     {deletePopup.show && deletePopup.tutorSubjectId && (
@@ -175,6 +240,15 @@ function MySubjectsPage() {
                             typeName="subject"
                             onDelete={handleDeleteTutorSubjectTrue}
                             onClose={() => setDeletePopup({ show: false, tutorSubjectId: null })}
+                        />
+                    )}
+                    {editPopup.show && editPopup.tutorSubjectToEdit !== null && (
+                        <EditTutorSubjectModal
+                            currentTutorSubject={editPopup.tutorSubjectToEdit}
+                            subjects={subjects}
+                            errorMessage={editTutorSubjectError}
+                            onEdit={handleEditTutorSubjectTrue}
+                            onClose={handleEditTutorSubjectFalse}
                         />
                     )}
                 </div>

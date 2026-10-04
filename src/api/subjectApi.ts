@@ -8,6 +8,7 @@ import type {
     TutorSubjectResponse,
     StudentTutorSubjectResponse,
     StudentTutorSubject,
+    UpdateTutorSubjectRequest,
 } from "../types/subject";
 
 
@@ -88,6 +89,23 @@ export async function tutorDeleteMyTutorSubject(tutorSubjectId: string) {
     // data class DeleteTutorSubjectResponse(
     //     val message: String,
     // )
+}
+
+export async function tutorUpdateMyTutorSubject(
+    tutorSubjectId: number, 
+    updatedTutorSubject: UpdateTutorSubjectRequest,
+): Promise<void> {
+    const endpoint = `/tutor/subjects/${tutorSubjectId}`
+
+    const response = await apiClient(endpoint, {
+        method: 'PUT',
+        body: JSON.stringify(updatedTutorSubject),
+    })
+
+    if (!response.ok) {
+        const message = await response.text()
+        throw new Error(message || 'Updating tutor subject failed')
+    }
 }
 
 export async function studentGetTutorsSubjects(tutorId: string): Promise<StudentTutorSubject[]> {

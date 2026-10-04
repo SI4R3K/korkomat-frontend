@@ -4,13 +4,17 @@ import TutorSubjectComponent from "./SubjectComponent"
 type SubjectListProps = {
     tutorSubjects: TutorSubject[],
     deletingSubjectId: string | null,
-    onDelete: (subjectId: string) => void
+    editingSubjectId: string | null,
+    onDelete: (subjectId: string) => void,
+    onEdit: (tutorSubject: TutorSubject) => void,
 }
 
 function SubjectList({
     tutorSubjects,
     deletingSubjectId,
+    editingSubjectId,
     onDelete,
+    onEdit
 }: SubjectListProps) {
     return (
         <section className="grid gap-4 md:grid-cols-2" aria-label="Tutor's subjects">
@@ -19,6 +23,8 @@ function SubjectList({
                     key={tutorSubject.id}
                     tutorSubject={tutorSubject}
                     deletingTutorSubjectId={deletingSubjectId}
+                    editingTutorSubjectId={editingSubjectId}
+                    onEdit={onEdit}
                     onDelete={onDelete}
                 />
             ))}

@@ -3,7 +3,9 @@ import { type SubjectLevel, type TutorSubject } from "../../../types/subject"
 type TutorSubjectComponentProps = {
     tutorSubject: TutorSubject,
     deletingTutorSubjectId: string | null
+    editingTutorSubjectId: string | null
     onDelete: (tutorSubjectId: string) => void
+    onEdit: (tutorSubject: TutorSubject) => void
 }
 
 const levelLabels: Record<SubjectLevel, string> = {
@@ -17,10 +19,14 @@ const levelLabels: Record<SubjectLevel, string> = {
 function TutorSubjectComponent({
     tutorSubject,
     deletingTutorSubjectId,
-    onDelete
+    editingTutorSubjectId,
+    onDelete,
+    onEdit
 }: TutorSubjectComponentProps) {
     const isDeleting = deletingTutorSubjectId === tutorSubject.id
     const isDeletingDisabled = deletingTutorSubjectId != null
+    const isEditing = editingTutorSubjectId === tutorSubject.id
+    const isEditingDisabled = editingTutorSubjectId != null
 
     return (
         <article key={tutorSubject.id} className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/5%)]">
@@ -28,8 +34,13 @@ function TutorSubjectComponent({
             <p className="mb-0 mt-2 text-sm font-bold text-[var(--color-primary)]">{tutorSubject.level ? levelLabels[tutorSubject.level] : 'Level not provided'}</p>
             <p className="mb-0 mt-3 leading-relaxed text-[var(--color-text-secondary)]">{tutorSubject.description}</p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <button type="button" className="rounded-xl border border-[var(--color-border)] px-4 py-3 font-bold text-[var(--color-text-primary)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]">
-                    Edit 
+                <button 
+                    type="button" 
+                    className="rounded-xl border border-[var(--color-border)] px-4 py-3 font-bold text-[var(--color-text-primary)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                    onClick={() => onEdit(tutorSubject)}
+                    disabled={isEditingDisabled}
+                >
+                    {isEditing ? 'Editing...' : 'Edit'} 
                 </button>
                 <button 
                     type="button" 

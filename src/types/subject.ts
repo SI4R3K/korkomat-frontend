@@ -1,9 +1,9 @@
 export type SubjectLevel =
-    'PRIMARY_SCHOOL' |
-    'EIGHT_GRADE_EXAM' |
-    'HIGH_SCHOOL' |
-    'MATURA_EXAM' |
-    'UNIVERSITY'
+    'PRIMARY_SCHOOL' 
+    | 'EIGHT_GRADE_EXAM' 
+    | 'HIGH_SCHOOL' 
+    | 'MATURA_EXAM'
+    | 'UNIVERSITY'
 
 // types for getting subjects
 export type ApiSubjectResponse = {
@@ -49,6 +49,13 @@ export type TutorSubject = {
     subjectName: string
     level: SubjectLevel
     description?: string
+}
+
+// tutor updating his subjects
+export type UpdateTutorSubjectRequest = {
+    subjectId: number
+    description: string
+    level: SubjectLevel
 }
 
 // student getting tutor subjects
