@@ -8,6 +8,7 @@ import { tutorAcceptReservation, tutorGetLessons, tutorRejectReservation } from 
 import type { TutorLesson } from "../../types/lesson"
 import LessonList from "../../components/ui/lesson/LessonList"
 import RejectModal from "../../components/ui/reject/RejectModal"
+import AcceptModal from "../../components/ui/accept/AcceptModal"
 
 function TutorLessonsPage() {
     const { logout } = useAuth()
@@ -20,10 +21,13 @@ function TutorLessonsPage() {
     const [isLoadingReservedSlots, setIsLoadingReservedSlots] = useState(true)
     const [reservedLessonsError, setReservedLessonsError] = useState('')
     const [reservedLessons, setReservedLessons] = useState<TutorLesson[]>([])
-    const [acceptingLessonId, setAcceptingLessonId] = useState<number | null>(null)
     const [acceptError, setAcceptError] = useState('')
     const [rejectError, setRejectError] = useState('')
     const [rejectPopup, setRejectPopup] = useState({
+        show: false,
+        lessonId: null as number | null
+    })
+    const [acceptPopup, setAcceptPopup] = useState({
         show: false,
         lessonId: null as number | null
     })
@@ -34,17 +38,35 @@ function TutorLessonsPage() {
         navigate('/login', {replace: true})
     }
 
-    const handleAcceptReservedLesson = async (lessonId: number) => {
+    const handleAcceptReservedLesson = (lessonId: number) => {
+        setAcceptPopup({
+            show: true,
+            lessonId: lessonId
+        })
+    }
+
+    const handleAcceptReservedLessonTrue = async () => {
         try {
-            setAcceptingLessonId(lessonId)
-            setAcceptError('')
-            await tutorAcceptReservation(lessonId)
-            await Promise.all([loadLessons(), loadReservedLessons()])
+            if (acceptPopup.show && acceptPopup.lessonId) {
+                setAcceptError('')
+                await tutorAcceptReservation(acceptPopup.lessonId)
+                await Promise.all([loadLessons(), loadReservedLessons()])
+            }
         } catch(error) {
             setAcceptError(error instanceof Error ? error.message : 'Could not accept reserved lesson.')
         } finally {
-            setAcceptingLessonId(null)
+            setAcceptPopup({
+                show: false,
+                lessonId: null
+            })
         }
+    }
+
+    const handleAcceptReservedLessonFalse = () => {
+        setAcceptPopup({
+            show: false,
+            lessonId: null
+        })
     }
 
     const handleRejectReservedLesson = (lessonId: number) => {
@@ -148,7 +170,7 @@ function TutorLessonsPage() {
                             type="RESERVED"
                             onAccept={handleAcceptReservedLesson}
                             onReject={handleRejectReservedLesson}
-                            acceptingLessonId={acceptingLessonId}
+                            acceptingLessonId={acceptPopup.lessonId}
                             rejectingLessonId={rejectPopup.lessonId}
                         />
                     ) : (
@@ -162,6 +184,13 @@ function TutorLessonsPage() {
                             typeName="lesson"
                             onReject={handleRejectReservedLessonTrue}
                             onClose={handleRejectReservedLessonFalse}
+                        />
+                    )}
+                    {acceptPopup.show && acceptPopup.lessonId !== null && (
+                        <AcceptModal 
+                            typeName="lesson"
+                            onAccept={handleAcceptReservedLessonTrue}
+                            onClose={handleAcceptReservedLessonFalse}
                         />
                     )}
 

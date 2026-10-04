@@ -40,7 +40,7 @@ function StudentLessonsPage() {
     }, [])
 
     return (
-        <main className="min-h-screen bg-[var(--color-background)]">
+        <main className="theme-student min-h-screen bg-[var(--color-background)]">
             <MakeSidebar
                 profileType="Student"
                 expanded={sidebarExpanded}

@@ -23,7 +23,7 @@ function DashboardPage({ profileType }: DashboardPageProps) {
     }
 
     return (
-        <main className="min-h-screen bg-[var(--color-background)]">
+        <main className={`${profileType === 'Student' ? 'theme-student' : ''} min-h-screen bg-[var(--color-background)]`}>
             <MakeSidebar profileType={profileType || 'Student'} expanded={sidebarExpanded} setExpanded={setSidebarExpanded} onLogout={handleLogout} isLoggingOut={isLoggingOut} />
             <section className={`min-h-screen pl-0 transition-all ${sidebarExpanded ? 'sm:pl-[280px]' : 'sm:pl-[84px]'}`}>
                 <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-10 sm:py-10">

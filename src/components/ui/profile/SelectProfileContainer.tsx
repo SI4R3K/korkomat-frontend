@@ -27,7 +27,7 @@ function SelectProfileContainer({
     
     return (
         <div
-            className="group grid min-h-[230px] grid-cols-[auto_1fr] gap-6 rounded-2xl border border-[var(--color-border)] bg-white p-7 shadow-[0_12px_28px_rgb(25_43_58/8%)] transition duration-200 hover:-translate-y-1 hover:border-[var(--color-primary)] hover:shadow-[0_16px_34px_rgb(25_43_58/14%)]"
+            className={`${profileKey === 'student' ? 'theme-student' : ''} group grid min-h-[230px] grid-cols-[auto_1fr] gap-6 rounded-2xl border border-[var(--color-border)] bg-white p-7 shadow-[0_12px_28px_rgb(25_43_58/8%)] transition duration-200 hover:-translate-y-1 hover:border-[var(--color-primary)] hover:shadow-[0_16px_34px_rgb(25_43_58/14%)]`}
             aria-label={`${profileType} profile`}
         >
             <div className="grid size-[52px] place-items-center rounded-[14px] bg-[var(--color-primary)] text-[22px] font-bold text-white" aria-hidden="true">

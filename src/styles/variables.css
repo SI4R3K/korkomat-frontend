@@ -25,3 +25,12 @@
     --color-shadow: rgb(31 41 55 / 8%);
     --color-shadow-hover: rgb(31 41 55 / 14%);
 }
+
+.theme-student {
+    --color-primary: #2878b8;
+    --color-primary-hover: #1f6398;
+    --color-primary-soft: rgb(40 120 184 / 11%);
+    --color-background: #f1f6fa;
+    --color-border: #d4e0e9;
+    --color-border-focus: #2878b8;
+}
