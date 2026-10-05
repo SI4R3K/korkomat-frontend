@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Button from '../../components/ui/button/Button'
 import Input from '../../components/ui/input/Input'
 import { register } from '../../api/authApi'
+import { getApiErrorMessage } from '../../api/ApiError'
 import { createProfile, type ProfileType } from '../../api/profileApi'
 import { useUserDetails } from '../../context/UserContext'
 
@@ -62,9 +63,7 @@ function RegisterPage() {
                 navigate(`/${mode}/dashboard`, { replace: true })
             }
         } catch (submissionError) {
-            setError(submissionError instanceof Error
-                ? submissionError.message
-                : 'Something went wrong. Please try again.')
+            setError(getApiErrorMessage(submissionError, 'Something went wrong. Please try again.'))
         } finally {
             setIsLoading(false)
         }

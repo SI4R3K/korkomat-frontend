@@ -11,11 +11,13 @@ import Input from '../ui/input/Input'
 import { useAuth } from '../../context/AuthContext'
 
 import { useUserDetails } from '../../context/UserContext'
+import { getApiErrorMessage } from '../../api/ApiError'
 
 function LoginForm() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [loginError, setLoginError] = useState('')
 
     const {
         login,
@@ -32,20 +34,17 @@ function LoginForm() {
         event: SubmitEvent<HTMLFormElement>
     ) => {
         event.preventDefault()
-
         setIsLoading(true)
-
         try {
             await login({
                 email,
                 password
             })
-            const userDetails = await getDetails()
-            
+            await getDetails()
             navigate('/select-profile')
-
         } catch (error) {
-            console.error('Login error: ',error)
+            setLoginError(getApiErrorMessage(error, 'Invalid email or password'))
+            console.log(error)
         } finally {
             setIsLoading(false)
         }
@@ -54,7 +53,9 @@ function LoginForm() {
     return (
         <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-1">
-
+                {loginError && (
+                    <p className="text-red-500 text-sm">{loginError}</p>
+                )}
                 <Input
                     id="email"
                     label="Email"

@@ -22,56 +22,36 @@ function normalizeAvailableSlots(payload: unknown): AvailableSlotsResponse {
 export async function studentGetSlots(): Promise<AvailableSlotsResponse> {
     const endpoint = '/student/available-slot/search'
 
-    const response = await apiClient(endpoint, {
+    const payload = await apiClient<unknown>(endpoint, {
         method: 'GET',
     })
 
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(message || 'Getting available slots failed')
-    }
-
-    return normalizeAvailableSlots(await response.json())
+    return normalizeAvailableSlots(payload)
 }
 
 export async function tutorGetSlots(): Promise<AvailableSlotsResponse> {
     const endpoint = '/tutor/available-slot'
 
-    const response = await apiClient(endpoint, {
+    const payload = await apiClient<unknown>(endpoint, {
         method: 'GET',
     })
 
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(message || 'Getting available slots failed')
-    }
-
-    return normalizeAvailableSlots(await response.json())
+    return normalizeAvailableSlots(payload)
 }
 
 export async function tutorCreateSlot(slot: CreateAvailableSlotRequest): Promise<void> {
-    const response = await apiClient('/tutor/available-slot', {
+    await apiClient<unknown>('/tutor/available-slot', {
         method: 'POST',
         body: JSON.stringify(slot),
     })
-
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(message || 'Creating available slot failed')
-    }
 }
 
-export async function tutorDeleteSlot(slotId: number) {
+export async function tutorDeleteSlot(slotId: number): Promise<void> {
     const endpoint = `/tutor/available-slot/${slotId}`
 
-    const response = await apiClient(endpoint, {
+    await apiClient<unknown>(endpoint, {
         method: 'DELETE'
     })
-
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(message || 'Deleting slot failed')
-    }
     // such DTO is in response
     // public final data class DeleteAvailableSlotsResponse(
     //  public final val message: String,
@@ -83,13 +63,8 @@ export async function tutorDeleteSlot(slotId: number) {
 export async function tutorUpdateSlot(slotId: number, slot: UpdateAvailableSlotRequest): Promise<void> {
     const endpoint = `/tutor/available-slot/${slotId}`
 
-    const response = await apiClient(endpoint, {
+    await apiClient<unknown>(endpoint, {
         method: 'PUT',
         body: JSON.stringify(slot),
     })
-
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(message || 'Updating available slot failed')
-    }
 }

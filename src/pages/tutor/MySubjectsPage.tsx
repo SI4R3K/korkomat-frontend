@@ -2,6 +2,7 @@ import { useEffect, useState, type SubmitEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import { useAuth } from "../../context/AuthContext"
+import { getApiErrorMessage } from "../../api/ApiError"
 import { type Subject, type SubjectLevel, type TutorSubject, type UpdateTutorSubjectRequest } from "../../types/subject"
 import { 
     tutorGetMyTutorSubjects, 
@@ -56,7 +57,7 @@ function MySubjectsPage() {
             setSubjects(availableSubjects)
             setTutorSubjects(currentTutorSubjects)
         } catch(error) {
-            setSubjectsError(error instanceof Error ? error.message : 'Could not load subjects.')
+            setSubjectsError(getApiErrorMessage(error, 'Could not load subjects.'))
         } finally {
             setIsLoadingSubjects(false)
         }
@@ -96,7 +97,7 @@ function MySubjectsPage() {
             setSelectedLevel('')
             setDescription('')
         } catch (error) {
-            let errorMessage = error instanceof Error ? error.message : ''
+            let errorMessage = getApiErrorMessage(error, '')
 
             try {
                 const response = JSON.parse(errorMessage) as { message?: string }
@@ -127,7 +128,7 @@ function MySubjectsPage() {
                 await Promise.all([loadSubjects()])
             }
         } catch(error) {
-            setDeleteTutorSubjectError(error instanceof Error ? error.message : 'Could not delete selected tutors subject')
+            setDeleteTutorSubjectError(getApiErrorMessage(error, 'Could not delete selected tutors subject'))
         } finally {
             setDeletePopup({
                 show: false,
@@ -164,7 +165,7 @@ function MySubjectsPage() {
                 tutorSubjectToEdit: null
             })
         } catch(error) {
-            let errorMessage = error instanceof Error ? error.message : ''
+            let errorMessage = getApiErrorMessage(error, '')
 
             try {
                 const response = JSON.parse(errorMessage) as { message?: string }

@@ -21,6 +21,10 @@ export type RegisterRequest = {
     password: string,
 }
 
+export type RegisterProfileResponse = {
+    message: string
+}
+
 export type ProfileRequest = {
     [key: string]: string,
 }

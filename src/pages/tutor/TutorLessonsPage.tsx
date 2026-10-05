@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import EmptyState from "../../components/ui/EmptyState"
 import { tutorAcceptReservation, tutorGetLessons, tutorRejectReservation } from "../../api/lessonApi"
+import { getApiErrorMessage } from "../../api/ApiError"
 import type { TutorLesson } from "../../types/lesson"
 import LessonList from "../../components/ui/lesson/LessonList"
 import RejectModal from "../../components/ui/reject/RejectModal"
@@ -53,7 +54,7 @@ function TutorLessonsPage() {
                 await Promise.all([loadLessons(), loadReservedLessons()])
             }
         } catch(error) {
-            setAcceptError(error instanceof Error ? error.message : 'Could not accept reserved lesson.')
+            setAcceptError(getApiErrorMessage(error, 'Could not accept reserved lesson.'))
         } finally {
             setAcceptPopup({
                 show: false,
@@ -85,7 +86,7 @@ function TutorLessonsPage() {
                 await Promise.all([loadLessons(), loadReservedLessons()])
             }      
         } catch(error) {
-            setRejectError(error instanceof Error ? error.message : 'Could not reject reserved lesson.')
+            setRejectError(getApiErrorMessage(error, 'Could not reject reserved lesson.'))
         } finally {
             setRejectPopup({
                 show: false,
@@ -105,9 +106,9 @@ function TutorLessonsPage() {
         try {
             setLessonsError('')
             const response = await tutorGetLessons('CONFIRMED')
-            setLessons(response.data.lessons)
+            setLessons(response.lessons)
         } catch (error) {
-            setLessonsError(error instanceof Error ? error.message : 'Could not load lessons.')
+            setLessonsError(getApiErrorMessage(error, 'Could not load lessons.'))
         } finally {
             setIsLoadingLessons(false)
         }
@@ -117,9 +118,9 @@ function TutorLessonsPage() {
         try {
             setReservedLessonsError('')
             const response = await tutorGetLessons('PENDING')
-            setReservedLessons(response.data.lessons)
+            setReservedLessons(response.lessons)
         } catch(error) {
-            setReservedLessonsError(error instanceof Error ? error.message : 'Could not load reserved lessons.')
+            setReservedLessonsError(getApiErrorMessage(error, 'Could not load reserved lessons.'))
         } finally {
             setIsLoadingReservedSlots(false)
         }

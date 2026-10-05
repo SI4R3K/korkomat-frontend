@@ -9,6 +9,7 @@ import type {
 } from '../../types/availableSlot'
 import EmptyState from '../../components/ui/EmptyState'
 import { useAuth } from "../../context/AuthContext"
+import { getApiErrorMessage } from "../../api/ApiError"
 
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 import mapApiSlot from "../../util/ApiSlotMapper"
@@ -54,7 +55,7 @@ function AvailabilityPage() {
             const response = await tutorGetSlots()
             setAvailableSlots(response.allAvailableSlots.map(mapApiSlot))
         } catch (error) {
-            setSlotsError(error instanceof Error ? error.message : 'Could not load available slots.')
+            setSlotsError(getApiErrorMessage(error, 'Could not load available slots.'))
         } finally {
             setIsLoadingSlots(false)
         }
@@ -87,7 +88,7 @@ function AvailabilityPage() {
             setCreateSlotSuccess('Slot added successfully.')
             await loadSlots()
         } catch (error) {
-            setCreateSlotError(error instanceof Error ? error.message : 'Could not create available slot.')
+            setCreateSlotError(getApiErrorMessage(error, 'Could not create available slot.'))
         } finally {
             setIsCreatingSlot(false)
         }
@@ -115,7 +116,7 @@ function AvailabilityPage() {
                 await Promise.all([loadSlots()])
             }
         } catch(error) {
-            setSlotsError(error instanceof Error ? error.message : 'Could not delete the slot.')
+            setSlotsError(getApiErrorMessage(error, 'Could not delete the slot.'))
         } finally {
             setDeletePopup({ 
                 show: false, 
@@ -158,7 +159,7 @@ function AvailabilityPage() {
             })
             await loadSlots()
         } catch(error) {
-            setSlotsError(error instanceof Error ? error.message : 'Could not update the slot.')
+            setSlotsError(getApiErrorMessage(error, 'Could not update the slot.'))
         } finally {
             setEditPopup({ 
                 show: false, 

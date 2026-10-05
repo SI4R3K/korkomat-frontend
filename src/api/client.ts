@@ -1,12 +1,16 @@
+import type { ApiResponse } from "../types/api"
+import { ApiError } from "./ApiError"
+
 const API_BASE_URL = 'http://localhost:8080'
 
-export async function apiClient(
+export async function apiClient<T>(
     endpoint: string,
     options?: RequestInit,
-) {
+): Promise<T> {
 
     const accessToken = 
         localStorage.getItem('accessToken')
+
     const tokenType =
         localStorage.getItem('tokenType') || 'Bearer'
 
@@ -16,7 +20,8 @@ export async function apiClient(
         headers.set('Content-Type', 'application/json')
     }
 
-    const isPublicAuthRequest = endpoint === '/auth/login'
+    const isPublicAuthRequest = 
+        endpoint === '/auth/login'
 
     if (accessToken && !isPublicAuthRequest) {
         headers.set(
@@ -32,6 +37,17 @@ export async function apiClient(
             headers,
         },
     )
+
+    const body: ApiResponse<T> = await response.json()
     
-    return response
+    if (!body.ok) {
+        throw new ApiError(
+            body.message,
+            body.errorStatus,
+        )
+    }
+
+    return body.data as T
 }
+
+

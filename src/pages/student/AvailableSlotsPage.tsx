@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { studentGetSlots } from '../../api/slotApi'
+import { getApiErrorMessage } from '../../api/ApiError'
 import { useAuth } from '../../context/AuthContext'
 import MakeSidebar from "../../components/ui/sidebar/Sidebar"
 
@@ -42,7 +43,7 @@ function AvailableSlotPage( { profileType }: AvailableSlotPageProps) {
             const response = await studentGetSlots()
             setAvailableSlots(response.allAvailableSlots.map(mapApiSlot))
         } catch (error) {
-            setSlotsError(error instanceof Error ? error.message : 'Could not load available slots.')
+            setSlotsError(getApiErrorMessage(error, 'Could not load available slots.'))
         } finally {
             setIsLoadingSlots(false)
         }

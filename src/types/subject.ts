@@ -7,9 +7,7 @@ export type SubjectLevel =
 
 // types for getting subjects
 export type ApiSubjectResponse = {
-    data: {
-        subjects: Subject[]
-    }
+    subjects: Subject[]
 }
 
 export type Subject = {
@@ -35,9 +33,7 @@ export type CreateTutorSubjectRequest = {
 
 // tutor getting subjects
 export type TutorSubjectResponse = {
-    data: {
-        tutorSubjects: TutorSubject[]
-    }
+    tutorSubjects: TutorSubject[]
 }
 
 export type TutorSubject = {
@@ -60,9 +56,7 @@ export type UpdateTutorSubjectRequest = {
 
 // student getting tutor subjects
 export type StudentTutorSubjectResponse = {
-    data: {
-        tutorSubjects: StudentTutorSubject[]
-    }
+    tutorSubjects: StudentTutorSubject[]
 }
 
 export type StudentTutorSubject = {

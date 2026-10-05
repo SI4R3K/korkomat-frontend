@@ -3,7 +3,7 @@ import LessonComponent from "./LessonComponent";
 
 type LessonListProps = {
     lessons: (TutorLesson | StudentLesson)[]
-    type: "RESERVED" | "UPCOMING",
+    type: "RESERVED" | "UPCOMING" | "PENDING",
     onAccept?: (lessonId: number) => void
     onReject?: (lessonId: number) => void
     acceptingLessonId?: number | null

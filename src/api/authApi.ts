@@ -6,18 +6,18 @@ import type {
     RegisterRequest,
 } from '../types/auth';
 
-async function ensureSuccessfulResponse(response: Response, action: string) {
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(message || `${action} failed (${response.status})`)
-    }
+type LoginPayload = {
+    accessToken?: string
+    refreshToken?: string
+    tokenType?: string
+    expiresIn?: number
 }
 
 export async function login(
     request: LoginRequest,
 ): Promise<LoginResponse> {
 
-    const response = await apiClient(
+    const data = await apiClient<LoginPayload>(
         '/auth/login',
         {
             method: 'POST',
@@ -25,13 +25,9 @@ export async function login(
         },
     )
 
-    await ensureSuccessfulResponse(response, 'Login')
-
-    const payload = await response.json()
-    const data = payload.data ?? payload
-    const accessToken = data.accessToken ?? data.access_token
-    const refreshToken = data.refreshToken ?? data.refresh_token
-    const tokenType = data.tokenType ?? data.token_type ?? 'Bearer'
+    const accessToken = data.accessToken
+    const refreshToken = data.refreshToken
+    const tokenType = data.tokenType ?? 'Bearer'
 
     if (!accessToken || !refreshToken) {
         throw new Error(
@@ -43,24 +39,22 @@ export async function login(
         accessToken,
         refreshToken,
         tokenType,
-        expiresIn: data.expiresIn ?? data.expires_in ?? 0,
+        expiresIn: data.expiresIn ?? 0,
     }
 }
 
 export async function register(request: RegisterRequest): Promise<void> {
-    const response = await apiClient('/auth/register', {
+    await apiClient<null>('/auth/register', {
         method: 'POST',
         body: JSON.stringify(request),
     })
-
-    await ensureSuccessfulResponse(response, 'Registration')
 }
 
 export async function logout(
     request: LogoutRequest,
 ): Promise<void> {
     
-    const response = await apiClient(
+    await apiClient<null>(
         '/auth/logout',
         {
             method: 'POST',
@@ -70,6 +64,4 @@ export async function logout(
             ),
         },
     )
-
-    await ensureSuccessfulResponse(response, 'Logout')
 }

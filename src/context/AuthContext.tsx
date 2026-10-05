@@ -9,6 +9,7 @@ import {
     login as loginRequest,
     logout as logoutRequest,
 } from '../api/authApi'
+import { getApiErrorMessage } from '../api/ApiError'
 
 import type {
     LoginRequest,
@@ -112,7 +113,7 @@ export function AuthProvider({
 
             console.error(
                 'Backend logout failed:',
-                error,
+                getApiErrorMessage(error, 'Backend logout failed.'),
             )
 
         } finally {

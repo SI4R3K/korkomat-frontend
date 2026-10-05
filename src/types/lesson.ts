@@ -6,21 +6,15 @@ export type BookLessonRequest = {
 }
 
 export type BookLessonResponse = {
-    data: {
-        message: string
-    }
+    message: string
 }
 
 export interface TutorGetLessons {
-    data: {
-        lessons: TutorLesson[]
-    }
+    lessons: TutorLesson[]
 }
 
 export interface StudentGetLessons {
-    data: {
-        lessons: StudentLesson[]
-    }
+    lessons: StudentLesson[]
 }
 
 export interface TutorLesson {

@@ -12,7 +12,7 @@ import type { UiTime } from '../../../types/time'
 
 type LessonComponentProps = {
     lesson: TutorLesson | StudentLesson
-    type: 'RESERVED' | 'UPCOMING',
+    type: 'RESERVED' | 'UPCOMING' | 'PENDING',
     onAccept?: (lessonId: number) => void
     onReject?: (lessonId: number) => void
     acceptingLessonId?: number | null
@@ -53,6 +53,7 @@ function LessonComponent({
         <UpcomingLesson
             lesson={lesson}
             uiTime={uiTime}
+            type={type === 'PENDING' ? 'PENDING' : 'UPCOMING'}
         />
     )
 }
@@ -125,17 +126,20 @@ function ReservedLesson({
 
 interface UpcomingLessonProps {
     lesson: TutorLesson | StudentLesson,
-    uiTime: UiTime
+    uiTime: UiTime,
+    type: 'UPCOMING' | 'PENDING'
 }
 
 function UpcomingLesson({
     lesson,
     uiTime,
+    type,
 }: UpcomingLessonProps) {
     const participantName = 'studentName' in lesson ? lesson.studentName : lesson.tutorName
+    const isPending = type === 'PENDING'
 
     return (
-        <article className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-[0_8px_24px_rgb(25_43_58/5%)] transition hover:-translate-y-0.5 hover:border-[var(--color-primary)] hover:shadow-[0_12px_28px_rgb(25_43_58/10%)]">
+        <article className={`rounded-2xl border border-[var(--color-border)] p-5 transition ${isPending ? 'bg-[var(--color-background)] shadow-[0_4px_12px_rgb(25_43_58/3%)] hover:shadow-[0_6px_16px_rgb(25_43_58/5%)]' : 'bg-white shadow-[0_8px_24px_rgb(25_43_58/5%)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgb(25_43_58/10%)]'} hover:border-[var(--color-primary)]`}>
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="m-0 text-sm font-bold uppercase tracking-[0.06em] text-[var(--color-primary)]">{lesson.subjectName}</p>

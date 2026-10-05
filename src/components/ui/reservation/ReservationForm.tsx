@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { BookOpenIcon, CheckIcon, ChevronDownIcon } from '@heroicons/react/24/outline'
 import { studentGetTutorsSubjects } from "../../../api/subjectApi"
 import { studentBookLesson } from "../../../api/lessonApi"
+import { getApiErrorMessage } from "../../../api/ApiError"
 import type { AvailableSlot } from "../../../types/availableSlot"
 import type { StudentTutorSubject } from "../../../types/subject"
 
@@ -56,7 +57,7 @@ function ReservationForm({
             await onBooked()
             onClose()
         } catch (error) {
-            setBookingError(error instanceof Error ? error.message : 'Could not book the lesson.')
+            setBookingError(getApiErrorMessage(error, 'Could not book the lesson.'))
         } finally {
             setIsBooking(false)
         }
@@ -81,7 +82,7 @@ function ReservationForm({
                 }
 
             } catch (error) {
-                setTutorsSubjectsError(error instanceof Error ? error.message : 'Could not load tutors subjects.')
+                setTutorsSubjectsError(getApiErrorMessage(error, 'Could not load tutors subjects.'))
             } finally {
                 setIsLoadingTutorsSubjects(false)
             }

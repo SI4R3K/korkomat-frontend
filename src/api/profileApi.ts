@@ -1,5 +1,5 @@
 import { apiClient } from './client'
-import type { ProfileRequest } from '../types/auth'
+import type { ProfileRequest, RegisterProfileResponse } from '../types/auth'
 
 export type ProfileType = 'student' | 'tutor'
 
@@ -10,13 +10,8 @@ export async function createProfile(
     const endpoint = profileType === 'student'
         ? '/user/register/student'
         : '/user/register/tutor'
-    const response = await apiClient(endpoint, {
+    await apiClient<RegisterProfileResponse>(endpoint, {
         method: 'POST',
         body: JSON.stringify(request),
     })
-
-    if (!response.ok) {
-        const message = await response.text()
-        throw new Error(message || `Creating ${profileType} profile failed (${response.status})`)
-    }
 }
