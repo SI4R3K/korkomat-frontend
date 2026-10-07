@@ -3,6 +3,9 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import LoginPage from '../pages/auth/LoginPage'
 import RegisterPage from '../pages/auth/RegisterPage'
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage'
+import RestPasswordPage from '../pages/auth/RestPasswordPage'
+import ConfirmEmailPage from '../pages/auth/ConfirmEmailPage'
+import EmailConfirmationPage from '../pages/auth/EmailConfirmationPage'
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 import ProfileSelection from '../pages/common/ProfileSelectionPage'
@@ -16,35 +19,51 @@ import StudentLessonsPage from '../pages/student/StudentLessonsPage'
 function AppRouter() {
     return (
         <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<Navigate to="/auth/login" replace />} />
 
-            <Route path="/login" element={
+            <Route path="/auth/login" element={
                 <PublicRoute>
                     <LoginPage />
                 </PublicRoute>
                 } />
+
+            <Route path="/auth/check-email" element={
+                <EmailConfirmationPage />
+                } />
                 
-            <Route path="/register" element={
+            <Route path="/auth/register" element={
                 <PublicRoute>
                     <RegisterPage />
                 </PublicRoute>
                 } />
 
-            <Route path="/register/student" element={
+            <Route path="/auth/register/student" element={
                 <ProtectedRoute>
                     <RegisterPage />
                 </ProtectedRoute>
                 } />
 
-            <Route path="/register/tutor" element={
+            <Route path="/auth/register/tutor" element={
                 <ProtectedRoute>
                     <RegisterPage />
                 </ProtectedRoute>
                 } />
 
-            <Route path="/forgot-password" element={
+            <Route path="/auth/forgot-password" element={
                 <PublicRoute>
                     <ForgotPasswordPage />
+                </PublicRoute>
+                }/>
+
+            <Route path="/auth/reset-password" element={
+                <PublicRoute>
+                    <RestPasswordPage />
+                </PublicRoute>
+                }/>
+
+            <Route path="/auth/verify" element={
+                <PublicRoute>
+                    <ConfirmEmailPage />
                 </PublicRoute>
                 }/>
 

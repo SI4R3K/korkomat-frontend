@@ -36,7 +36,7 @@ function TutorLessonsPage() {
     const handleLogout = async () => {
         setIsLoggingOut(true)
         await logout()
-        navigate('/login', {replace: true})
+        navigate('/auth/login', {replace: true})
     }
 
     const handleAcceptReservedLesson = (lessonId: number) => {

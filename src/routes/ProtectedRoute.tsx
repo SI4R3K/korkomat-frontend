@@ -18,7 +18,7 @@ function ProtectedRoute({
     if (!isAuthenticated) {
         return (
             <Navigate
-                to="/login"
+                to="/auth/login"
                 replace
             />
         )

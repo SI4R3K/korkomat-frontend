@@ -44,7 +44,7 @@ function MySubjectsPage() {
     const handleLogout = async () => {
         setIsLoggingOut(true)
         await logout()
-        navigate('/login', {replace: true})
+        navigate('/auth/login', {replace: true})
     }
 
     const loadSubjects = async () => {

@@ -28,3 +28,12 @@ export type RegisterProfileResponse = {
 export type ProfileRequest = {
     [key: string]: string,
 }
+
+export type ForgotPasswordRequest = {
+    email: string
+}
+
+export type RessetPasswordRequest = {
+    token: string,
+    password: string
+}

@@ -22,7 +22,7 @@ function SelectProfileContainer({
 
         navigate(profileExists
             ? `/${profileKey}/dashboard`
-            : `/register/${profileKey}`)
+            : `/auth/register/${profileKey}`)
     }
     
     return (

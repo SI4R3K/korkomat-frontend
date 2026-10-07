@@ -97,7 +97,7 @@ function AvailabilityPage() {
     const handleLogout = async () => {
         setIsLoggingOut(true)
         await logout()
-        navigate('/login', {replace: true})
+        navigate('/auth/login', {replace: true})
     }
 
     const handleDeleteSlot = (slotId: number) => {

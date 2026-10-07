@@ -19,7 +19,7 @@ function DashboardPage({ profileType }: DashboardPageProps) {
     const handleLogout = async () => {
         setIsLoggingOut(true)
         await logout()
-        navigate('/login', { replace: true })
+        navigate('/auth/login', { replace: true })
     }
 
     return (

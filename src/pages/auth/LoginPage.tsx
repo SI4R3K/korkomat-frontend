@@ -14,9 +14,9 @@ function LoginPage() {
                     <LoginForm />
                     <div className="mt-6 flex flex-col items-start justify-between gap-3 text-sm text-[var(--color-text-secondary)] sm:flex-row sm:items-center">
                         <p className="m-0">
-                            Don&apos;t have an account? <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/register">Create one</Link>
+                            Don&apos;t have an account? <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/auth/register">Create one</Link>
                         </p>
-                        <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/forgot-password">Forgot password?</Link>
+                        <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/auth/forgot-password">Forgot password?</Link>
                     </div>
                 </div>
             </section>

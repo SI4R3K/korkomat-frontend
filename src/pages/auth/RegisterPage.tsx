@@ -56,7 +56,7 @@ function RegisterPage() {
                     email: values.email ?? '',
                     password: values.password ?? '',
                 })
-                navigate('/login', { state: { registrationComplete: true } })
+                navigate('/auth/check-email', { state: { email: values.email ?? '' }, replace: true })
             } else {
                 await createProfile(mode, values)
                 await getDetails()
@@ -100,7 +100,7 @@ function RegisterPage() {
                         </Button>
                     </form>
                     <div className="mt-6 text-sm text-[var(--color-text-secondary)]">
-                        {isProfile ? <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/select-profile">Back to profile selection</Link> : <p className="m-0">Already have an account? <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/login">Sign in</Link></p>}
+                        {isProfile ? <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/select-profile">Back to profile selection</Link> : <p className="m-0">Already have an account? <Link className="font-bold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] hover:underline" to="/auth/login">Sign in</Link></p>}
                     </div>
                 </div>
             </section>

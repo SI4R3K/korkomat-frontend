@@ -1,9 +1,11 @@
 import { apiClient } from "./client";
 import type { 
+    ForgotPasswordRequest,
     LoginRequest, 
     LoginResponse, 
     LogoutRequest,
     RegisterRequest,
+    ResetPasswordRequest,
 } from '../types/auth';
 
 type LoginPayload = {
@@ -65,3 +67,44 @@ export async function logout(
         },
     )
 }
+
+export async function verifyEmail(
+    token: string | null
+) {
+    const endpoint = `/auth/verify?token=${token}`
+
+    await apiClient<null>(endpoint, {
+        method: 'GET'
+    })
+}
+
+export async function forgotPassword(
+    request: ForgotPasswordRequest
+): Promise<any> {
+
+    const endpoint = '/auth/forgot-password'
+
+    await apiClient<null>(endpoint,{
+        method: 'POST',
+
+        body: JSON.stringify(
+            request
+        ),
+    })
+}
+
+export async function resetPassword(
+    request: ResetPasswordRequest
+): Promise<any> {
+    const endpoint = '/auth/reset-password'
+
+    const data = await apiClient<any>(endpoint,{
+        method: 'POST',
+
+        body: JSON.stringify(
+            request
+        ),
+    })
+
+    return data
+} 
